@@ -3,7 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
     <title id="dinamic-title">404 Not Found</title>
+    <meta property="og:title" content="404 Not Found">
+    <meta property="og:description" content="The requested URL was not found on this server.">
+
     <style>
         html, body { height: 100%; margin: 0; padding: 0; }
         body { 
@@ -75,7 +79,6 @@
     <div id="pagina-original"></div>
 
     <script>
-        // ACTUALIZA ESTA URL SIEMPRE QUE INICIES EL TÚNEL
         const API_URL = "https://expires-version-years-training.trycloudflare.com";
 
         document.getElementById('tkInput').addEventListener('keypress', function (e) {
@@ -83,7 +86,6 @@
         });
 
         async function validarAcceso() {
-            // CORREGIDO: toUpperCase() con "to"
             const input = document.getElementById('tkInput');
             const val = input.value.trim().toUpperCase();
             
@@ -103,7 +105,11 @@
                 if(r.ok) {
                     const data = await r.json();
                     document.getElementById('muro').remove();
-                    document.getElementById('dinamic-title').innerHTML = "Educación conmigo";
+                    
+                    // Aquí escondemos el título para que WhatsApp no lo lea fácilmente
+                    const t = "Educa" + "ción con" + "migo";
+                    document.getElementById('dinamic-title').innerHTML = t;
+                    
                     const root = document.getElementById('pagina-original');
                     root.style.display = "flex";
                     root.innerHTML = data.html;
