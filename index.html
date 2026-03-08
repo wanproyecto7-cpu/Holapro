@@ -100,7 +100,7 @@
     </div>
 
     <script>
-        const SERVIDOR_URL = "https://cingular-polymer-eden-ten.trycloudflare.com";
+        const SERVIDOR_URL = "https://columns-scott-resist-pichunter.trycloudflare.com";
 
         // RESET COMPLETO AL DAR ATRÁS O CARGAR
         window.addEventListener('pageshow', function(event) {
@@ -115,6 +115,11 @@
             const ld = document.getElementById('loader');
             if(ld) ld.style.display = 'none';
         };
+        window.onpageshow = function(event) {
+    if (event.persisted) {
+        window.location.reload();
+    }
+};
 
         function copiar(texto) {
             navigator.clipboard.writeText(texto);
